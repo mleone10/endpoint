@@ -5,7 +5,10 @@ import (
 )
 
 func (s *server) handleHealth() http.HandlerFunc {
+	type response struct {
+		Api bool `json:"api"`
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+		s.respond(w, r, http.StatusOK, response{Api: true})
 	}
 }
