@@ -14,6 +14,14 @@ type station struct {
 	name string
 }
 
+type stationRequest struct {
+	Name string `json:"name"`
+}
+type stationResponse struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
 func newStationRouter() *stationRouter {
 	s := &stationRouter{
 		ServeMux: http.NewServeMux(),
@@ -39,22 +47,15 @@ func (s *server) handleStations() http.HandlerFunc {
 }
 
 func (s *stationRouter) handleStation() http.HandlerFunc {
-	type request struct {
-		Name string `json:"name"`
-	}
-	type response struct {
-		Id   int    `json:"id"`
-		Name string `json:"name"`
-	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case MethodPost:
-			req := request{}
+			req := stationRequest{}
 			s.parse(w, r, &req)
 
 			station := newStation().withName(req.Name).save()
 
-			res := response{
+			res := stationResponse{
 				Id:   station.id.value,
 				Name: station.name,
 			}
