@@ -1,0 +1,49 @@
+The player takes the role of an overseer for a self-reliant space station.  Various systems must be monitored and controlled, and decisions must be made about the stations efforts and structure.
+
+This game will consist of two parts - the first is the simulation engine, accessible via API.  Players must make calls to this API as if they were entering commands into the stations mainframe.
+
+The second part is more open, and not necessarily required to go live - an actual game interface.  Players can play using only curl calls if they so wish.  The nature of the interface means others can develop utilities, calculators, GUIs, and more.  For the purposes of development, I’ll likely make some kind of CLI tool.
+
+The simulation will include:
+* Population: people produce things, but require oxygen, food, and water
+* Oxygen: generated/recycled
+* Food: grown in farms
+* Water: harvested from asteroids and/or recycled
+* Power: generated via solar panels or nuclear plants
+* Hull integrity: compromised by meteorites, repaired by people
+* Disasters: range from minor (a module must be taken offline) to severe (a
+        module was destroyed, people were killed)
+* Manufacturing and resource gathering: produce funds to expand
+
+The project will also feature:
+From a tech side, the game will feature:
+- HTTPS interface
+- Push events and notifications
+- Thorough API documentation
+
+Research
+A unified research system is used to develop new modules, module upgrades, and corporate research, which is sold back to Earth for money and resources.
+
+Modules
+Individual modules are created but don’t have to be “placed”.  They’re all just assumed to be attached somewhere.  Modules have specific qualities, as well as common ones like power efficiency, comfort, hull strength, and an upgrade level.  Maybe some have variants to allow them to specialize?  Those of course need to be researched first.
+- Solar Array
+- Nuclear Plant
+- RTG
+- Research Lab
+- Crew Quarters (barracks, apartments, suite)
+- Hydroponic Farm
+- Oxygen Farm
+- Factory
+- Hanger
+- Medics Bay
+- Cargo Bay
+
+New stations have a standard command module, which comes with basic quarters, solar power generation, water filtration, and food production.
+
+Station personnel to list and modify inhabitants’ names, assignments.  New personnel can be born, if there are enough men/women (possibility for “relationships” mechanics) or they can be hired for a fee (interstellar travel is expensive).  Do crew members get paid...?
+
+Station events feeds (text and JSON) to get feed of random events and station happenings.  “Construction of module XYZ complete”, “Meteor storm inbound”, “<person> has fallen ill!”
+
+Need to consider what spaces the station has if people are live their whole lives there. It wouldn’t be all research, there would be businesses, leisure, public and private space.  Think more futuristic?
+
+"Paths" present different means to achieve success with their station.  Mine and sell processed ore?  Construct ships?  Scientific research?  All can produce income.
