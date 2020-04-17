@@ -1,19 +1,19 @@
 # API Documentation
 
 ## Resources
-/health
+`/health`
 
-/stations
-/stations/{id}
+`/stations`
+`/stations/{id}`
 
-/stations/{id}/modules
-/stations/{id}/modules/{id}
+`/stations/{id}/modules`
+`/stations/{id}/modules/{id}`
 
-/stations/{id}/research
-/stations/{id}/research/labs
-/stations/{id}/research/labs/{id}
-/stations/{id}/research/projects
-/stations/{id}/research/projects/{id}
+`/stations/{id}/research`
+`/stations/{id}/research/labs`
+`/stations/{id}/research/labs/{id}`
+`/stations/{id}/research/projects`
+`/stations/{id}/research/projects/{id}`
 
 ## URIs
 `/health`
