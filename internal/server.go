@@ -2,8 +2,8 @@ package internal
 
 import (
 	"log"
-	"os"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 )
@@ -14,7 +14,7 @@ type server struct {
 }
 
 func NewServer() *server {
-	s := &server {
+	s := &server{
 		router: chi.NewRouter(),
 		logger: log.New(os.Stderr, "", log.LstdFlags),
 	}
@@ -26,6 +26,6 @@ func NewServer() *server {
 	return s
 }
 
-func (s *server) Router() *chi.Mux {
-	return s.router
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.router.ServeHTTP(w, r)
 }

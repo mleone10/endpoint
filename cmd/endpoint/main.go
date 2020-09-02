@@ -9,5 +9,5 @@ import (
 
 func main() {
 	log.Println("Running Endpoint server on localhost port 8080")
-	log.Fatal(http.ListenAndServe(":8080", internal.NewServer().Router()))
+	log.Fatal(http.ListenAndServe(":8080", internal.NewServer()))
 }
