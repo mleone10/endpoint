@@ -1,0 +1,32 @@
+name: Deploy React App
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Install Node packages
+        working-directory: frontend
+        run: npm install
+      - name: Build page
+        working-directory: frontend
+        run: npm run build
+      - name: Deploy page
+        working-directory: frontend
+        run: |
+          mv build docs
+          cp CNAME docs
+          git config --local user.email "${{ secrets.EMAIL }}"
+          git config --local user.name "mleone10"
+          git add -A
+          git commit -m "Updating site"
+          git push -f "https://${{ env.GITHUB_ACTOR }}:${{ secrets.GITHUB_TOKEN }}@github.com/mleone10/endpoint.git" HEAD:gh-pages
