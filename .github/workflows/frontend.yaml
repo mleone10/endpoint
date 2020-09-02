@@ -21,10 +21,13 @@ jobs:
         working-directory: frontend
         run: npm run build
       - name: Deploy page
-        working-directory: frontend
         run: |
+          pushd frontend
           mv build docs
           cp CNAME docs
+          popd
+          mv frontend/docs .
+          rm -rf backend frontend
           git config --local user.email "${{ secrets.EMAIL }}"
           git config --local user.name "mleone10"
           git add -A
