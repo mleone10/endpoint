@@ -1,0 +1,27 @@
+service: endpoint-backend
+frameworkVersion: '>=1.28.0 <2.0.0'
+plugins:
+  - serverless-domain-manager
+provider:
+  name: aws
+  runtime: go1.x
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+functions:
+  api:
+    handler: bin/lambda
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true
+      - http:
+          path: /
+          method: any
+          cors: true
+custom:
+  customDomain:
+    domainName: 'api.endpointgame.com'
