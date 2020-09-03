@@ -15,10 +15,13 @@ jobs:
         with:
           go-version: 1.14.x
       - name: Install NPM Dependencies
+        working-directory: backend
         run: npm install
       - name: Build Lambda Artifact
+        working-directory: backend
         run: make build
       - name: Deploy to AWS
+        working-directory: backend
         uses: serverless/github-action@master
         with:
           args: deploy --verbose
