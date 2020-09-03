@@ -16,7 +16,7 @@ jobs:
           go-version: 1.14.x
       - name: Install NPM Dependencies
         working-directory: backend
-        run: npm install
+        run: npm install -g
       - name: Build Lambda Artifact
         working-directory: backend
         run: make build
