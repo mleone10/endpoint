@@ -1,9 +1,10 @@
-name: Deploy React App
+name: Deploy Web Frontend
 
 on:
   push:
     branches: [master]
 
+name: Deploy to GitHub Pages
 jobs:
   build:
     runs-on: ubuntu-latest
