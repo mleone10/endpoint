@@ -1,10 +1,9 @@
-name: Deploy Web Frontend
+name: Deploy Frontend to GitHub Pages
 
 on:
   push:
     branches: [master]
 
-name: Deploy to GitHub Pages
 jobs:
   build:
     runs-on: ubuntu-latest
