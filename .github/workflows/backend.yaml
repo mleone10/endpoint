@@ -20,7 +20,7 @@ jobs:
           node-version: 12
       - name: Install NPM Dependencies
         working-directory: backend
-        run: npm ci -g
+        run: npm ci
       - name: Build Lambda Artifact
         working-directory: backend
         run: make build
