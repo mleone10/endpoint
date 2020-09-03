@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Endpoint backend API",
   "dependencies": {
+    "serverless": "^1.81.1",
     "serverless-domain-manager": "^3.3.1"
   }
 }

@@ -10,3 +10,6 @@ build:
 
 run: clean build
 	./bin/endpoint
+
+deploy:
+	sls deploy --verbose
