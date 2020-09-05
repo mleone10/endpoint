@@ -23,7 +23,9 @@ jobs:
         run: npm ci
       - name: Build Lambda Artifact
         working-directory: backend
-        run: make build
+        run: |
+          echo ${{ secrets.ENDPOINT_CREDENTIALS }} >> endpointCredentials.json
+          make build
       - name: Deploy to AWS
         working-directory: backend
         run: $(npm bin)/serverless deploy --verbose

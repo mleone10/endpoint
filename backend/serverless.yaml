@@ -13,6 +13,9 @@ package:
 functions:
   api:
     handler: bin/lambda
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: bin/endpointCredentials.json
+
     events:
       - http:
           path: /{proxy+}
