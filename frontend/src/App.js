@@ -4,6 +4,7 @@ import AuthButton from "./AuthButton";
 class App extends React.Component {
   handleLogin = (idToken) => {
     this.setState({ idToken: idToken });
+    // TODO: Create a way to easily point to a local API for development
     fetch("https://api.endpointgame.com/user/api-keys", {
       headers: { Authorization: idToken },
     })
