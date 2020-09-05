@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/render"
 	"github.com/mleone10/endpoint/internal/server/middleware"
 )
 
@@ -23,8 +24,13 @@ func NewServer() *Server {
 	}
 
 	s.router.Use(middleware.ErrorReporter())
-	s.router.Use(middleware.AuthTokenVerifier())
 	s.router.Get("/health", s.handleHealth())
+	s.router.Group(func(r chi.Router) {
+		r.Use(middleware.AuthTokenVerifier())
+		r.Get("/private", func(w http.ResponseWriter, r *http.Request) {
+			render.PlainText(w, r, "Hello there!")
+		})
+	})
 
 	return s
 }
