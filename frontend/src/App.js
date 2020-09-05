@@ -4,6 +4,13 @@ import AuthButton from "./AuthButton";
 class App extends React.Component {
   handleLogin = (idToken) => {
     this.setState({ idToken: idToken });
+    fetch("https://api.endpointgame.com/user/api-keys", {
+      headers: { Authorization: idToken },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
   };
 
   handleLogout = () => {
