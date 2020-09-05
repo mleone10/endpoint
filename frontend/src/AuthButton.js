@@ -27,6 +27,11 @@ class AuthButton extends React.Component {
       .auth()
       .onAuthStateChanged((user) => {
         this.setState({ isSignedIn: !!user });
+        if (user) {
+          firebase.auth().currentUser.getIdToken().then(this.props.onLogin)
+        } else {
+          this.props.onLogout()
+        }
       });
   }
 
