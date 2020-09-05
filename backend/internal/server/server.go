@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/go-chi/chi"
-	"github.com/go-chi/render"
 	"github.com/mleone10/endpoint/internal/server/middleware"
+	"github.com/mleone10/endpoint/internal/user"
 )
 
 // Server is a root-level http.Handler
@@ -25,12 +25,7 @@ func NewServer() *Server {
 
 	s.router.Use(middleware.ErrorReporter())
 	s.router.Get("/health", s.handleHealth())
-	s.router.Group(func(r chi.Router) {
-		r.Use(middleware.AuthTokenVerifier())
-		r.Get("/private", func(w http.ResponseWriter, r *http.Request) {
-			render.PlainText(w, r, "Hello there!")
-		})
-	})
+	s.router.Mount("/user", user.NewServer())
 
 	return s
 }

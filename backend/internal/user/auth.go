@@ -1,4 +1,4 @@
-package middleware
+package user
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	firebase "firebase.google.com/go"
-	"github.com/mleone10/endpoint/internal/user"
 )
 
 // AuthTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
@@ -32,7 +31,7 @@ func AuthTokenVerifier() func(next http.Handler) http.Handler {
 			}
 
 			// Create a new context off of the original request context, but add the user ID from the verified token.
-			ctx := user.NewContext(r.Context(), user.NewID(verifiedToken.UID))
+			ctx := NewContext(r.Context(), NewID(verifiedToken.UID))
 			next.ServeHTTP(w, r.Clone(ctx))
 		})
 	}
