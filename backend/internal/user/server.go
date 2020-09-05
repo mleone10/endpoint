@@ -2,6 +2,7 @@ package user
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -18,7 +19,9 @@ func NewServer() *Server {
 		router: chi.NewRouter(),
 	}
 
-	s.router.Use(AuthTokenVerifier())
+	_, isLocal := os.LookupEnv("ENDPOINT_LOCAL")
+
+	s.router.Use(OrMiddleware(isLocal, AuthStubber(), AuthTokenVerifier()))
 	s.router.Get("/api-keys", func(w http.ResponseWriter, r *http.Request) {
 		type response struct {
 			Keys []apiKey `json:"keys"`

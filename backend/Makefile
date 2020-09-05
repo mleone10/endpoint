@@ -10,7 +10,7 @@ build: clean
 	cp endpointCredentials.json bin/
 
 run: clean build
-	GOOGLE_APPLICATION_CREDENTIALS=./bin/endpointCredentials.json ./bin/endpoint
+	GOOGLE_APPLICATION_CREDENTIALS=./bin/endpointCredentials.json ENDPOINT_LOCAL=true ./bin/endpoint
 
 deploy:
 	serverless deploy --verbose

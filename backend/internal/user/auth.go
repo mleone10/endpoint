@@ -36,3 +36,13 @@ func AuthTokenVerifier() func(next http.Handler) http.Handler {
 		})
 	}
 }
+
+// AuthStubber is a middleware which ignores the provided Authorization header and instead injects a static user ID into the request.
+func AuthStubber() func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := NewContextWithID(r.Context(), NewID("testUserID"))
+			next.ServeHTTP(w, r.Clone(ctx))
+		})
+	}
+}
