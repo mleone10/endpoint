@@ -31,7 +31,7 @@ func AuthTokenVerifier() func(next http.Handler) http.Handler {
 			}
 
 			// Create a new context off of the original request context, but add the user ID from the verified token.
-			ctx := NewContext(r.Context(), NewID(verifiedToken.UID))
+			ctx := NewContextWithID(r.Context(), NewID(verifiedToken.UID))
 			next.ServeHTTP(w, r.Clone(ctx))
 		})
 	}

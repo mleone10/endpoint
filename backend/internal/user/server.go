@@ -19,8 +19,17 @@ func NewServer() *Server {
 	}
 
 	s.router.Use(AuthTokenVerifier())
-	s.router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		render.PlainText(w, r, "Hello there!")
+	s.router.Get("/api-keys", func(w http.ResponseWriter, r *http.Request) {
+		type response struct {
+			Keys []apiKey `json:"keys"`
+		}
+		apiKeys, err := getAPIKeys(r.Context())
+		if err != nil {
+			http.Error(w, "could not retrieve API keys", http.StatusInternalServerError)
+			return
+		}
+
+		render.JSON(w, r, response{Keys: apiKeys})
 	})
 
 	return s
