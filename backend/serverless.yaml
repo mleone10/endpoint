@@ -1,10 +1,19 @@
 service: endpoint-backend
-frameworkVersion: '>=1.28.0 <2.0.0'
+frameworkVersion: ">=1.28.0 <2.0.0"
 plugins:
   - serverless-domain-manager
 provider:
   name: aws
   runtime: go1.x
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:438693460185:table/endpoint"
 package:
   exclude:
     - ./**
@@ -15,7 +24,6 @@ functions:
     handler: bin/lambda
     environment:
       GOOGLE_APPLICATION_CREDENTIALS: bin/endpointCredentials.json
-
     events:
       - http:
           path: /{proxy+}
@@ -27,4 +35,23 @@ functions:
           cors: true
 custom:
   customDomain:
-    domainName: 'api.endpointgame.com'
+    domainName: "api.endpointgame.com"
+resources:
+  Resources:
+    gamesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: endpoint
+        KeySchema:
+          - AttributeName: userID
+            KeyType: HASH
+          - AttributeName: sortKey
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: userID
+            AttributeType: S
+          - AttributeName: sortKey
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
