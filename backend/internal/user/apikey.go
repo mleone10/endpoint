@@ -2,10 +2,13 @@ package user
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/segmentio/ksuid"
 )
+
+var errorReadingUserID = errors.New("could not retrieve user ID from context")
 
 // APIKey represents an internal and client-facing API key
 type APIKey struct {
@@ -16,14 +19,14 @@ type APIKey struct {
 
 type apiKeyDatastore interface {
 	GetAPIKeys(uid *ID) ([]APIKey, error)
-	PutAPIKey(apiKey *APIKey) error
+	PutAPIKey(uid *ID, apiKey *APIKey) error
 }
 
 func getAPIKeys(ctx context.Context, db apiKeyDatastore) ([]APIKey, error) {
 	if uid, ok := IDFromContext(ctx); ok {
 		return db.GetAPIKeys(uid)
 	}
-	return nil, fmt.Errorf("could not retrieve user ID from context")
+	return nil, errorReadingUserID
 }
 
 func newAPIKey(ctx context.Context, db apiKeyDatastore, nickname string, readOnly bool) (*APIKey, error) {
@@ -33,7 +36,13 @@ func newAPIKey(ctx context.Context, db apiKeyDatastore, nickname string, readOnl
 		ReadOnly: readOnly,
 	}
 
-	err := db.PutAPIKey(apiKey)
+	uid, ok := IDFromContext(ctx)
+	if !ok {
+
+		return nil, errorReadingUserID
+	}
+
+	err := db.PutAPIKey(uid, apiKey)
 	if err != nil {
 		return nil, fmt.Errorf("could not save key to database: %w", err)
 	}

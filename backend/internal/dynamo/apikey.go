@@ -49,7 +49,26 @@ func (c *Client) GetAPIKeys(uid *user.ID) ([]user.APIKey, error) {
 }
 
 // PutAPIKey writes the given APIKey to the database, or returns an error.
-func (c *Client) PutAPIKey(apiKey *user.APIKey) error {
-	// TODO: Implement PutItem call
+func (c *Client) PutAPIKey(uid *user.ID, apiKey *user.APIKey) error {
+	item, err := dynamodbattribute.MarshalMap(APIKey{
+		UserID:   uid.Value(),
+		SortKey:  fmt.Sprintf("KEY#%s", apiKey.Key),
+		Key:      apiKey.Key,
+		Nickname: apiKey.Nickname,
+		ReadOnly: apiKey.ReadOnly,
+	})
+	if err != nil {
+		return fmt.Errorf("could not convert APIKey to database item: %w", err)
+	}
+
+	_, err = c.db.PutItem(&dynamodb.PutItemInput{
+		TableName:           aws.String(endpointTableName),
+		Item:                item,
+		ConditionExpression: aws.String(fmt.Sprintf("attribute_not_exists(%s) and attribute_not_exists(%s)", endpointPK, endpointSK)),
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
