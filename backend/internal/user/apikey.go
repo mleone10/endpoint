@@ -5,7 +5,12 @@ import (
 	"fmt"
 )
 
-type APIKey string
+// APIKey represents an internal and client-facing API key
+type APIKey struct {
+	Key      string `json:"key"`
+	Nickname string `json:"nickname"`
+	ReadOnly bool   `json:"readOnly"`
+}
 
 type apiKeyDatastore interface {
 	GetAPIKeys(uid *ID) ([]APIKey, error)

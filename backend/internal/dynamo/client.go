@@ -3,7 +3,6 @@ package dynamo
 import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/mleone10/endpoint/internal/user"
 )
 
 /*
@@ -12,7 +11,11 @@ import (
 	GSI (PK: userID:string, SK: apiKey:string)
 */
 
-const endpointTableName = "endpoint"
+const (
+	endpointTableName = "endpoint"
+	endpointPK        = "userID"
+	endpointSK        = "sortKey"
+)
 
 // Client represents a DynamoDB accessor.
 type Client struct {
@@ -28,10 +31,4 @@ func NewClient() (*Client, error) {
 	return &Client{
 		db: dynamodb.New(sess),
 	}, nil
-}
-
-// GetAPIKeys fetches a list of API keys for a given user, or an error if they cannot be retrieved.
-func (c *Client) GetAPIKeys(uid *user.ID) ([]user.APIKey, error) {
-	// TODO: Call DynamoDB table to retrieve keys
-	return []user.APIKey{user.APIKey(uid.Value())}, nil
 }
