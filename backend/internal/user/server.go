@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -66,8 +67,14 @@ func NewServer(db Datastore) *Server {
 
 		render.JSON(w, r, apiKey)
 	})
+	s.router.Delete("/api-keys/{apiKey}", func(w http.ResponseWriter, r *http.Request) {
+		apiKey := chi.URLParam(r, "apiKey")
 
-	// TODO: Implement DELETE /api-keys/{key} (delete the given APIKey)
+		err := deleteAPIKey(r.Context(), s.db, apiKey)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to deleted API key [%s]: %w", apiKey, err), http.StatusInternalServerError)
+		}
+	})
 
 	return s
 }

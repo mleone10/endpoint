@@ -67,7 +67,31 @@ func (c *Client) PutAPIKey(uid *user.ID, apiKey *user.APIKey) error {
 		ConditionExpression: aws.String(fmt.Sprintf("attribute_not_exists(%s) and attribute_not_exists(%s)", endpointPK, endpointSK)),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to insert API key from database: %w", err)
+	}
+
+	return nil
+}
+
+// DeleteAPIKey removes the given APIKey from the database, or returns an error.
+func (c *Client) DeleteAPIKey(uid *user.ID, apiKey *user.APIKey) error {
+	key, err := dynamodbattribute.MarshalMap(struct {
+		UserID  string `json:"userID"`
+		SortKey string `json:"sortKey"`
+	}{
+		UserID:  uid.Value(),
+		SortKey: fmt.Sprintf("KEY#%s", apiKey.Key),
+	})
+	if err != nil {
+		return fmt.Errorf("could not create APIKey key: %w", err)
+	}
+
+	_, err = c.db.DeleteItem(&dynamodb.DeleteItemInput{
+		TableName: aws.String(endpointTableName),
+		Key:       key,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete API key from database: %w", err)
 	}
 
 	return nil

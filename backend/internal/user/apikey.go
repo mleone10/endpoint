@@ -20,6 +20,7 @@ type APIKey struct {
 type apiKeyDatastore interface {
 	GetAPIKeys(uid *ID) ([]APIKey, error)
 	PutAPIKey(uid *ID, apiKey *APIKey) error
+	DeleteAPIKey(uid *ID, apiKey *APIKey) error
 }
 
 func getAPIKeys(ctx context.Context, db apiKeyDatastore) ([]APIKey, error) {
@@ -38,7 +39,6 @@ func newAPIKey(ctx context.Context, db apiKeyDatastore, nickname string, readOnl
 
 	uid, ok := IDFromContext(ctx)
 	if !ok {
-
 		return nil, errorReadingUserID
 	}
 
@@ -48,4 +48,13 @@ func newAPIKey(ctx context.Context, db apiKeyDatastore, nickname string, readOnl
 	}
 
 	return apiKey, nil
+}
+
+func deleteAPIKey(ctx context.Context, db apiKeyDatastore, apiKey string) error {
+	uid, ok := IDFromContext(ctx)
+	if !ok {
+		return errorReadingUserID
+	}
+
+	return db.DeleteAPIKey(uid, &APIKey{Key: apiKey})
 }
