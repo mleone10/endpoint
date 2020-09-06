@@ -36,22 +36,22 @@ functions:
 custom:
   customDomain:
     domainName: "api.endpointgame.com"
-resources:
-  Resources:
-    endpointTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: endpoint
-        KeySchema:
-          - AttributeName: userID
-            KeyType: HASH
-          - AttributeName: sortKey
-            KeyType: RANGE
-        AttributeDefinitions:
-          - AttributeName: userID
-            AttributeType: S
-          - AttributeName: sortKey
-            AttributeType: S
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+# resources:
+#   Resources:
+#     endpointTable:
+#       Type: AWS::DynamoDB::Table
+#       Properties:
+#         TableName: endpoint
+#         KeySchema:
+#           - AttributeName: userID
+#             KeyType: HASH
+#           - AttributeName: sortKey
+#             KeyType: RANGE
+#         AttributeDefinitions:
+#           - AttributeName: userID
+#             AttributeType: S
+#           - AttributeName: sortKey
+#             AttributeType: S
+#         ProvisionedThroughput:
+#           ReadCapacityUnits: 1
+#           WriteCapacityUnits: 1
