@@ -1,9 +1,19 @@
 package user
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
-type apiKey string
+type APIKey string
 
-func getAPIKeys(ctx context.Context) ([]apiKey, error) {
-	return []apiKey{apiKey("key1"), apiKey("key2")}, nil
+type apiKeyDatastore interface {
+	GetAPIKeys(uid *ID) ([]APIKey, error)
+}
+
+func getAPIKeys(ctx context.Context, db apiKeyDatastore) ([]APIKey, error) {
+	if uid, ok := IDFromContext(ctx); ok {
+		return db.GetAPIKeys(uid)
+	}
+	return nil, fmt.Errorf("could not retrieve user ID from context")
 }

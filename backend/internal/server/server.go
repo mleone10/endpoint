@@ -15,19 +15,25 @@ import (
 type Server struct {
 	router *chi.Mux
 	logger *log.Logger
+	db     Datastore
+}
+
+type Datastore interface {
+	user.Datastore
 }
 
 // NewServer returns an initialized Server
-func NewServer() *Server {
+func NewServer(db Datastore) *Server {
 	s := &Server{
 		router: chi.NewRouter(),
 		logger: log.New(os.Stderr, "", log.LstdFlags),
+		db:     db,
 	}
 
 	s.router.Use(middleware.ErrorReporter())
 	s.router.Use(cors.AllowAll().Handler)
 	s.router.Get("/health", s.handleHealth())
-	s.router.Mount("/user", user.NewServer())
+	s.router.Mount("/user", user.NewServer(s.db))
 
 	return s
 }

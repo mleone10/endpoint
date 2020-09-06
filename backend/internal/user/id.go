@@ -9,3 +9,8 @@ type ID struct {
 func NewID(uid string) *ID {
 	return &ID{id: uid}
 }
+
+// Value returns the internal user ID's string representation
+func (i *ID) Value() string {
+	return i.id
+}

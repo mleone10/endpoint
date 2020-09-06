@@ -12,7 +12,7 @@ func NewContextWithID(ctx context.Context, id *ID) context.Context {
 }
 
 // IDFromContext returns the ID stored in ctx, if any.
-func IDFromContext(ctx context.Context) (string, bool) {
-	uid, ok := ctx.Value(userIDKey).(string)
+func IDFromContext(ctx context.Context) (*ID, bool) {
+	uid, ok := ctx.Value(userIDKey).(*ID)
 	return uid, ok
 }
