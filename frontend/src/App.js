@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import AuthButton from "./AuthButton";
 
 class App extends React.Component {
@@ -20,12 +21,41 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>Endpoint</h1>
-        <AuthButton onLogin={this.handleLogin} onLogout={this.handleLogout} />
-      </div>
+      <Router>
+        <Header onLogin={this.handleLogin} onLogout={this.handleLogout} />
+        <NavBar />
+        <Content />
+      </Router>
     );
   }
+}
+
+function Header(props) {
+  return (
+    <div>
+      <AuthButton onLogin={props.handleLogin} onLogout={props.handleLogout} />
+      <Link to="/"><h1>endpoint://</h1></Link>
+    </div>
+  );
+}
+
+function NavBar(props) {
+  return (
+    <div>
+      <Link to="/about">about</Link>
+      <Link to="/docs">docs</Link>
+      <Link to="/acct">acct</Link>
+    </div>
+  )
+}
+
+function Content(props) {
+  return <div>
+    <Route exact={true} path="/">home page</Route>
+    <Route exact={true} path="/about">about page</Route>
+    <Route exact={true} path="/docs">docs page</Route>
+    <Route exact={true} path="/acct">acct page</Route>
+  </div>
 }
 
 export default App;
