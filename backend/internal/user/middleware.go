@@ -21,6 +21,7 @@ func AuthTokenVerifier() func(next http.Handler) http.Handler {
 			panic(fmt.Sprintf("error initializing auth middleware: %v", err))
 		}
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// TODO: Update Authorization header to include "Bearer" identifier
 			userID, err := authenticator.VerifyJWT(r.Context(), r.Header.Get("Authorization"))
 			if err != nil {
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)

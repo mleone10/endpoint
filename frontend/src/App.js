@@ -6,18 +6,10 @@ import Documentation from "./Documentation";
 import AccountManagement from "./AccountManagement";
 
 class App extends React.Component {
-  state = {}
+  state = {};
 
   handleLogin = (idToken) => {
     this.setState({ idToken: idToken });
-    // TODO: Create a way to easily point to a local API for development
-    fetch("https://api.endpointgame.com/user/api-keys", {
-      headers: { Authorization: idToken },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
   };
 
   handleLogout = () => {
