@@ -6,6 +6,8 @@ import Documentation from "./Documentation";
 import AccountManagement from "./AccountManagement";
 
 class App extends React.Component {
+  state = {}
+
   handleLogin = (idToken) => {
     this.setState({ idToken: idToken });
     // TODO: Create a way to easily point to a local API for development
@@ -27,7 +29,7 @@ class App extends React.Component {
       <Router>
         <Header onLogin={this.handleLogin} onLogout={this.handleLogout} />
         <NavBar />
-        <Content />
+        <Content idToken={this.state.idToken} />
       </Router>
     );
   }
@@ -36,7 +38,7 @@ class App extends React.Component {
 function Header(props) {
   return (
     <div>
-      <AuthButton onLogin={props.handleLogin} onLogout={props.handleLogout} />
+      <AuthButton onLogin={props.onLogin} onLogout={props.onLogout} />
       <Link to="/">
         <h1>endpoint://</h1>
       </Link>
@@ -65,7 +67,7 @@ function Content(props) {
         <Documentation />
       </Route>
       <Route exact={true} path="/acct">
-        <AccountManagement />
+        <AccountManagement idToken={props.idToken} />
       </Route>
     </div>
   );
