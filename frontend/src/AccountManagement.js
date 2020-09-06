@@ -36,6 +36,8 @@ class AccountManagement extends React.Component {
     fetch(`https://api.endpointgame.com/user/api-keys/${keyValue}`, {
       method: "DELETE",
       headers: { Authorization: this.props.idToken },
+    }).then(() => {
+      this.fetchApiKeys(this.props.idToken)
     });
     // TODO: Handle failure
   };

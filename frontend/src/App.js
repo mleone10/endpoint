@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Route, Link } from "react-router-dom";
 import AuthButton from "./AuthButton";
 import About from "./About";
 import Documentation from "./Documentation";
