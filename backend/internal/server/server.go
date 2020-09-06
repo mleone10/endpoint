@@ -18,8 +18,10 @@ type Server struct {
 	db     Datastore
 }
 
+// Datastore describes the persistence operations required by the HTTP server
 type Datastore interface {
 	user.Datastore
+	Health() bool
 }
 
 // NewServer returns an initialized Server

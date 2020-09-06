@@ -13,6 +13,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
       Resource: "arn:aws:dynamodb:us-east-1:438693460185:table/endpoint"
 package:
   exclude:
@@ -36,22 +37,22 @@ functions:
 custom:
   customDomain:
     domainName: "api.endpointgame.com"
-# resources:
-#   Resources:
-#     endpointTable:
-#       Type: AWS::DynamoDB::Table
-#       Properties:
-#         TableName: endpoint
-#         KeySchema:
-#           - AttributeName: userID
-#             KeyType: HASH
-#           - AttributeName: sortKey
-#             KeyType: RANGE
-#         AttributeDefinitions:
-#           - AttributeName: userID
-#             AttributeType: S
-#           - AttributeName: sortKey
-#             AttributeType: S
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 1
-#           WriteCapacityUnits: 1
+resources:
+  Resources:
+    endpointTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: endpoint
+        KeySchema:
+          - AttributeName: userID
+            KeyType: HASH
+          - AttributeName: sortKey
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: userID
+            AttributeType: S
+          - AttributeName: sortKey
+            AttributeType: S
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

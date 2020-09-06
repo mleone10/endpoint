@@ -1,6 +1,10 @@
 package dynamo
 
-import "github.com/mleone10/endpoint/internal/user"
+import (
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/mleone10/endpoint/internal/user"
+)
 
 /*
 	Table schema (PK: userID:string, SK: sortKey:string)
@@ -8,14 +12,22 @@ import "github.com/mleone10/endpoint/internal/user"
 	GSI (PK: userID:string, SK: apiKey:string)
 */
 
+const endpointTableName = "endpoint"
+
 // Client represents a DynamoDB accessor.
 type Client struct {
+	db *dynamodb.DynamoDB
 }
 
 // NewClient returns an initialized Dynamo Client.
 func NewClient() (*Client, error) {
-	// TODO: Initialize underlying DynamoDB client
-	return &Client{}, nil
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}))
+
+	return &Client{
+		db: dynamodb.New(sess),
+	}, nil
 }
 
 // GetAPIKeys fetches a list of API keys for a given user, or an error if they cannot be retrieved.
