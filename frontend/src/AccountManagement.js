@@ -1,6 +1,7 @@
 import React from "react";
 
 class AccountManagement extends React.Component {
+  // TODO: Unset data on sign out
   state = {};
 
   fetchApiKeys = () => {
@@ -14,6 +15,28 @@ class AccountManagement extends React.Component {
           this.setState({ apiKeys: data.keys });
         });
     }
+    // TODO: Handle failure
+  };
+
+  handleCreateNewApiKey = (nickname, readOnly) => {
+    fetch("https://api.endpointgame.com/user/api-keys", {
+      method: "POST",
+      headers: { Authorization: this.props.idToken },
+      body: JSON.stringify({
+        readOnly: readOnly,
+        nickname: nickname,
+      }),
+    }).then(() => {
+      this.fetchApiKeys(this.props.idToken);
+    });
+    // TODO: Handle failure
+  };
+
+  handleDeleteApiKey = (keyValue) => {
+    fetch(`https://api.endpointgame.com/user/api-keys/${keyValue}`, {
+      method: "DELETE",
+      headers: { Authorization: this.props.idToken },
+    });
     // TODO: Handle failure
   };
 
@@ -39,13 +62,10 @@ class AccountManagement extends React.Component {
       return (
         <div>
           <ApiKeyPanel
-            idToken={this.props.idToken}
             apiKeys={this.state.apiKeys}
+            onDeleteApiKey={this.handleDeleteApiKey}
           />
-          <ApiKeyCreatePanel
-            idToken={this.props.idToken}
-            onCreateNewApiKey={this.fetchApiKeys}
-          />
+          <ApiKeyCreatePanel onCreateNewApiKey={this.handleCreateNewApiKey} />
         </div>
       );
     } else {
@@ -57,7 +77,12 @@ class AccountManagement extends React.Component {
 class ApiKeyPanel extends React.Component {
   render() {
     if (this.props.apiKeys !== undefined && this.props.apiKeys.length > 0) {
-      return <ApiKeysList apiKeys={this.props.apiKeys} />;
+      return (
+        <ApiKeysList
+          apiKeys={this.props.apiKeys}
+          onDeleteApiKey={this.props.onDeleteApiKey}
+        />
+      );
     } else {
       return <p>no api keys found</p>;
     }
@@ -65,14 +90,16 @@ class ApiKeyPanel extends React.Component {
 }
 
 function ApiKeysList(props) {
-  // TODO: Iterate through list and display key, plus delete button
   if (props.apiKeys !== undefined) {
     const keys = props.apiKeys.map((key) => (
       <li key={key.key}>
         <p>
           {key.nickname} - {key.readOnly ? "true" : "false"} - {key.key}
         </p>
-        <DeleteButton keyValue={key.key} />
+        <DeleteButton
+          keyValue={key.key}
+          onDeleteApiKey={props.onDeleteApiKey}
+        />
       </li>
     ));
     return <ul>{keys}</ul>;
@@ -80,8 +107,22 @@ function ApiKeysList(props) {
 }
 
 class DeleteButton extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(event) {
+    this.props.onDeleteApiKey(this.props.keyValue);
+    event.preventDefault();
+  }
+
   render() {
-    return <p>delete {this.props.keyValue}</p>;
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <button type="submit">Delete</button>
+      </form>
+    );
   }
 }
 
@@ -104,23 +145,9 @@ class ApiKeyCreatePanel extends React.Component {
   }
 
   handleSubmit(event) {
-    this.createNewApiKey(this.state.nickname, this.state.readOnly);
+    this.props.onCreateNewApiKey(this.state.nickname, this.state.readOnly);
     event.preventDefault();
   }
-
-  createNewApiKey = (nickname, readOnly) => {
-    fetch("https://api.endpointgame.com/user/api-keys", {
-      method: "POST",
-      headers: { Authorization: this.props.idToken },
-      body: JSON.stringify({
-        readOnly: readOnly,
-        nickname: nickname,
-      }),
-    }).then(() => {
-      this.props.onCreateNewApiKey();
-    });
-    // TODO: Handle failure
-  };
 
   render() {
     return (
