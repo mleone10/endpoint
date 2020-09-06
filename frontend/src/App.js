@@ -1,6 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import AuthButton from "./AuthButton";
+import About from "./About";
+import Documentation from "./Documentation";
+import AccountManagement from "./AccountManagement";
 
 class App extends React.Component {
   handleLogin = (idToken) => {
@@ -34,7 +37,9 @@ function Header(props) {
   return (
     <div>
       <AuthButton onLogin={props.handleLogin} onLogout={props.handleLogout} />
-      <Link to="/"><h1>endpoint://</h1></Link>
+      <Link to="/">
+        <h1>endpoint://</h1>
+      </Link>
     </div>
   );
 }
@@ -46,16 +51,24 @@ function NavBar(props) {
       <Link to="/docs">docs</Link>
       <Link to="/acct">acct</Link>
     </div>
-  )
+  );
 }
 
 function Content(props) {
-  return <div>
-    <Route exact={true} path="/">home page</Route>
-    <Route exact={true} path="/about">about page</Route>
-    <Route exact={true} path="/docs">docs page</Route>
-    <Route exact={true} path="/acct">acct page</Route>
-  </div>
+  return (
+    <div>
+      <Route exact={true} path="/"></Route>
+      <Route exact={true} path="/about">
+        <About />
+      </Route>
+      <Route exact={true} path="/docs">
+        <Documentation />
+      </Route>
+      <Route exact={true} path="/acct">
+        <AccountManagement />
+      </Route>
+    </div>
+  );
 }
 
 export default App;
