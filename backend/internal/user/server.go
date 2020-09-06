@@ -74,6 +74,8 @@ func NewServer(db Datastore) *Server {
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to deleted API key [%s]: %w", apiKey, err), http.StatusInternalServerError)
 		}
+
+		render.NoContent(w, r)
 	})
 
 	return s
