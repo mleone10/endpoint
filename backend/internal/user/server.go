@@ -41,6 +41,8 @@ func NewServer(db Datastore) *Server {
 
 		render.JSON(w, r, response{Keys: apiKeys})
 	})
+	// TODO: Implement POST /api-keys (create new APIKey)
+	// TODO: Implement DELETE /api-keys/{key} (delete the given APIKey)
 
 	return s
 }
