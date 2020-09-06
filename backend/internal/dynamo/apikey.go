@@ -47,3 +47,9 @@ func (c *Client) GetAPIKeys(uid *user.ID) ([]user.APIKey, error) {
 
 	return ret, nil
 }
+
+// PutAPIKey writes the given APIKey to the database, or returns an error.
+func (c *Client) PutAPIKey(apiKey *user.APIKey) error {
+	// TODO: Implement PutItem call
+	return nil
+}
