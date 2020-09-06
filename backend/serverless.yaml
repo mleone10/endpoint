@@ -38,7 +38,7 @@ custom:
     domainName: "api.endpointgame.com"
 resources:
   Resources:
-    gamesTable:
+    endpointTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: endpoint
