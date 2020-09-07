@@ -3,7 +3,7 @@ import { HashRouter as Router, Route, Link } from "react-router-dom";
 import AuthButton from "./AuthButton";
 import About from "./About";
 import Documentation from "./Documentation";
-import AccountManagement from "./AccountManagement";
+import AccountManagement from "./accountManagement/AccountManagement";
 
 class App extends React.Component {
   state = {};
