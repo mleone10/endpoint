@@ -1,9 +1,12 @@
 import React from "react";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
+
 import AuthButton from "./AuthButton";
 import About from "./About";
 import Documentation from "./Documentation";
 import AccountManagement from "./accountManagement/AccountManagement";
+
+import "./App.css";
 
 class App extends React.Component {
   state = {};
@@ -19,7 +22,8 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <Header onLogin={this.handleLogin} onLogout={this.handleLogout} />
+        <TopBar onLogin={this.handleLogin} onLogout={this.handleLogout} />
+        <Title />
         <NavBar />
         <Content idToken={this.state.idToken} />
       </Router>
@@ -27,23 +31,38 @@ class App extends React.Component {
   }
 }
 
-function Header(props) {
+function TopBar(props) {
   return (
-    <div>
+    <div className="topBar">
       <AuthButton onLogin={props.onLogin} onLogout={props.onLogout} />
-      <Link to="/">
-        <h1>endpoint://</h1>
-      </Link>
+    </div>
+  );
+}
+
+function Title(props) {
+  return (
+    <div className="title">
+      <Link to="/">endpoint://</Link>
     </div>
   );
 }
 
 function NavBar(props) {
   return (
-    <div>
-      <Link to="/about">about</Link>
-      <Link to="/docs">docs</Link>
-      <Link to="/acct">acct</Link>
+    <div className="navBar">
+      <NavBarItem display="about" path="/about" addClass="navBarItemFirst" />
+      <NavBarItem display="docs" path="/docs" />
+      <NavBarItem display="acct" path="/acct" addClass="navBarItemLast" />
+    </div>
+  );
+}
+
+function NavBarItem(props) {
+  return (
+    <div className={`navBarItem ${props.addClass ? props.addClass : ""}`}>
+      <Link to={props.path}>
+        <span> {props.display}</span>
+      </Link>
     </div>
   );
 }
