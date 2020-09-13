@@ -44,14 +44,14 @@ resources:
       Properties:
         TableName: endpoint
         KeySchema:
-          - AttributeName: userID
+          - AttributeName: pk
             KeyType: HASH
-          - AttributeName: sortKey
+          - AttributeName: sk
             KeyType: RANGE
         AttributeDefinitions:
-          - AttributeName: userID
+          - AttributeName: pk
             AttributeType: S
-          - AttributeName: sortKey
+          - AttributeName: sk
             AttributeType: S
         ProvisionedThroughput:
           ReadCapacityUnits: 1

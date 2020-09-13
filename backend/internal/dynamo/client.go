@@ -5,16 +5,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-/*
-	Table schema (PK: userID:string, SK: sortKey:string)
-	API-Key schema (SK: KEY#key:string, Attrs: apiKey:string, name:string, readOnly:string)
-	GSI (PK: userID:string, SK: apiKey:string)
-*/
-
 const (
 	endpointTableName = "endpoint"
-	endpointPK        = "userID"
-	endpointSK        = "sortKey"
+	endpointPK        = "pk"
+	endpointSK        = "sk"
 )
 
 // Client represents a DynamoDB accessor.

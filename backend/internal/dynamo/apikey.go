@@ -11,8 +11,8 @@ import (
 
 // APIKey represents an API key database item
 type APIKey struct {
-	UserID   string `json:"userID"`
-	SortKey  string `json:"sortKey"`
+	UserID   string `json:"pk"`
+	SortKey  string `json:"sk"`
 	Key      string `json:"key"`
 	Nickname string `json:"nickname"`
 	ReadOnly bool   `json:"readOnly"`
@@ -76,8 +76,8 @@ func (c *Client) PutAPIKey(uid *user.ID, apiKey *user.APIKey) error {
 // DeleteAPIKey removes the given APIKey from the database, or returns an error.
 func (c *Client) DeleteAPIKey(uid *user.ID, apiKey *user.APIKey) error {
 	key, err := dynamodbattribute.MarshalMap(struct {
-		UserID  string `json:"userID"`
-		SortKey string `json:"sortKey"`
+		UserID  string `json:"pk"`
+		SortKey string `json:"sk"`
 	}{
 		UserID:  uid.Value(),
 		SortKey: fmt.Sprintf("KEY#%s", apiKey.Key),
