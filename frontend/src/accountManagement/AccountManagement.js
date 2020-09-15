@@ -73,7 +73,11 @@ class AccountManagement extends React.Component {
         </div>
       );
     } else {
-      return <div className="content"><h3>Log in to manage your account.</h3></div>;
+      return (
+        <div className="content">
+          <h3>Log in to manage your account.</h3>
+        </div>
+      );
     }
   }
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 
 // import AuthButton from "./AuthButton";
+import Home from "./Home";
 import About from "./About";
 import Documentation from "./Documentation";
 import AccountManagement from "./accountManagement/AccountManagement";
@@ -33,17 +34,11 @@ class App extends React.Component {
 function TopBar(props) {
   return (
     <div className="topBar">
-      <Title />
+      <h1 className="title">
+        <Link to="/">endpoint://</Link>
+      </h1>
       {/* <AuthButton onLogin={props.onLogin} onLogout={props.onLogout} /> */}
     </div>
-  );
-}
-
-function Title(props) {
-  return (
-    <h1 className="title">
-      <Link to="/">endpoint://</Link>
-    </h1>
   );
 }
 
@@ -68,7 +63,9 @@ function NavBarItem(props) {
 function Content(props) {
   return (
     <div>
-      <Route exact={true} path="/"></Route>
+      <Route exact={true} path="/">
+        <Home />
+      </Route>
       <Route exact={true} path="/about">
         <About />
       </Route>
