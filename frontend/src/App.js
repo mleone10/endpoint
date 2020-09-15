@@ -26,6 +26,7 @@ class App extends React.Component {
         <TopBar onLogin={this.handleLogin} onLogout={this.handleLogout} />
         <NavBar />
         <Content idToken={this.state.idToken} />
+        <Footer />
       </Router>
     );
   }
@@ -76,6 +77,15 @@ function Content(props) {
         <AccountManagement idToken={props.idToken} />
       </Route>
     </div>
+  );
+}
+
+function Footer(props) {
+  return (
+    <footer>
+      Copyright &copy; 2020 Mario Leone &middot; Hosted on{" "}
+      <a href="https://github.com/mleone10/endpoint">GitHub</a>
+    </footer>
   );
 }
 
