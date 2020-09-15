@@ -1,19 +1,15 @@
-.topBar {
-  clear: both;
-  text-align: right;
+html {
+  overflow: auto;
+  margin-left: calc(100vw - 100%);
 }
 
-.title {
+.topBar {
   clear: both;
-  text-align: center;
-  margin-bottom: 1vw;
 }
 
 .title a {
   text-decoration: none;
   color: #ffffff;
-  font-size: 10.5vw;
-  font-weight: bold;
 }
 
 .navBar {
@@ -34,11 +30,8 @@
 
 .navBarItem a {
   text-decoration: none;
-}
-
-.navBarItem span {
   display: block;
-  color: #FFFFFF;
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -48,4 +41,8 @@
 
 .navBarItemLast {
   margin-right: 0;
+}
+
+.content {
+  color: rgba(255, 255, 255, 0.90);
 }

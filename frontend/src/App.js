@@ -1,7 +1,7 @@
 import React from "react";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 
-import AuthButton from "./AuthButton";
+// import AuthButton from "./AuthButton";
 import About from "./About";
 import Documentation from "./Documentation";
 import AccountManagement from "./accountManagement/AccountManagement";
@@ -23,7 +23,6 @@ class App extends React.Component {
     return (
       <Router>
         <TopBar onLogin={this.handleLogin} onLogout={this.handleLogout} />
-        <Title />
         <NavBar />
         <Content idToken={this.state.idToken} />
       </Router>
@@ -34,16 +33,17 @@ class App extends React.Component {
 function TopBar(props) {
   return (
     <div className="topBar">
-      <AuthButton onLogin={props.onLogin} onLogout={props.onLogout} />
+      <Title />
+      {/* <AuthButton onLogin={props.onLogin} onLogout={props.onLogout} /> */}
     </div>
   );
 }
 
 function Title(props) {
   return (
-    <div className="title">
+    <h1 className="title">
       <Link to="/">endpoint://</Link>
-    </div>
+    </h1>
   );
 }
 
@@ -60,9 +60,7 @@ function NavBar(props) {
 function NavBarItem(props) {
   return (
     <div className={`navBarItem ${props.addClass ? props.addClass : ""}`}>
-      <Link to={props.path}>
-        <span> {props.display}</span>
-      </Link>
+      <Link to={props.path}>{props.display}</Link>
     </div>
   );
 }

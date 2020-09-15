@@ -14,6 +14,7 @@ const firebaseConfig = {
 };
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
+// TODO: Convert sign-in to display in a modal
 class AuthButton extends React.Component {
   uiConfig = {
     signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
@@ -28,9 +29,9 @@ class AuthButton extends React.Component {
       .onAuthStateChanged((user) => {
         this.setState({ isSignedIn: !!user });
         if (user) {
-          firebase.auth().currentUser.getIdToken().then(this.props.onLogin)
+          firebase.auth().currentUser.getIdToken().then(this.props.onLogin);
         } else {
-          this.props.onLogout()
+          this.props.onLogout();
         }
       });
   }

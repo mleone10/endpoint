@@ -1,6 +1,6 @@
 import React from "react";
 import ApiKeysList from "./ApiKeysList";
-import ApiKeyCreateForm from "./ApiKeyCreateForm"
+import ApiKeyCreateForm from "./ApiKeyCreateForm";
 
 class AccountManagement extends React.Component {
   // TODO: Unset data on sign out
@@ -73,7 +73,7 @@ class AccountManagement extends React.Component {
         </div>
       );
     } else {
-      return <p>login to manage your account</p>;
+      return <div className="content"><h3>Log in to manage your account.</h3></div>;
     }
   }
 }
