@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter as Router, Route, Link } from "react-router-dom";
 
 // import AuthButton from "./AuthButton";
+import Footer from "./Footer";
 import Home from "./Home";
 import About from "./About";
 import Documentation from "./Documentation";
@@ -33,6 +34,7 @@ class App extends React.Component {
 }
 
 function TopBar(props) {
+  // TODO: Add button for Login
   return (
     <div className="topBar">
       <h1 className="title">
@@ -77,15 +79,6 @@ function Content(props) {
         <AccountManagement idToken={props.idToken} />
       </Route>
     </div>
-  );
-}
-
-function Footer(props) {
-  return (
-    <footer>
-      Copyright &copy; 2020 Mario Leone &middot; Hosted on{" "}
-      <a href="https://github.com/mleone10/endpoint">GitHub</a>
-    </footer>
   );
 }
 

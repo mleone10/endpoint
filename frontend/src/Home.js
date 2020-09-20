@@ -3,7 +3,7 @@ import React from "react";
 function Home(props) {
   return (
     <div className="content">
-      <h2>> What is Endpoint?</h2>
+      <h2>&gt; What is Endpoint?</h2>
       <p>
         <b>Endpoint</b> is a space station management simulator.
       </p>
