@@ -17,12 +17,12 @@ type Client struct {
 }
 
 // NewClient returns an initialized Dynamo Client.
-func NewClient() (*Client, error) {
+func NewClient() *Client {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
 	return &Client{
 		db: dynamodb.New(sess),
-	}, nil
+	}
 }

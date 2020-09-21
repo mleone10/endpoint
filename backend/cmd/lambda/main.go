@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/handlerfunc"
@@ -14,12 +12,7 @@ var adapter *handlerfunc.HandlerFuncAdapter
 var db *dynamo.Client
 
 func init() {
-	db, err := dynamo.NewClient()
-	if err != nil {
-		// TODO: Probably need to handle this error differently since it's occurring before the proxy
-		log.Fatalf("Error initializing database: %w", err)
-	}
-
+	db := dynamo.NewClient()
 	adapter = handlerfunc.New(server.NewServer(db).ServeHTTP)
 }
 
