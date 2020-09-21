@@ -7,7 +7,6 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"github.com/mleone10/endpoint/internal/server/middleware"
 	"github.com/mleone10/endpoint/internal/user"
 )
 
@@ -32,7 +31,6 @@ func NewServer(db Datastore) *Server {
 		db:     db,
 	}
 
-	s.router.Use(middleware.ErrorReporter())
 	s.router.Use(cors.AllowAll().Handler)
 	s.router.Get("/health", s.handleHealth())
 	s.router.Mount("/user", user.NewServer(s.db))
