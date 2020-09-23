@@ -17,7 +17,7 @@ func TestHealth(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 
-	server := NewServer(mock.NewMockClient())
+	server := NewServer(mock.NewClient())
 
 	server.ServeHTTP(rr, req)
 

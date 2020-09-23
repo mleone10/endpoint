@@ -5,7 +5,7 @@ import "github.com/mleone10/endpoint/internal/user"
 type Client struct {
 }
 
-func NewMockClient() *Client {
+func NewClient() *Client {
 	return &Client{}
 }
 

@@ -6,7 +6,10 @@ clean:
 test:
 	go test ./internal/...
 
-build: clean test
+integration:
+	go test --tags=integration ./internal/...
+
+build: clean integration
 	for CMD in `ls cmd`; do \
 		env GOOS=linux go build -ldflags="-s -w" -o bin/$$CMD ./cmd/$$CMD/...; \
 	done
