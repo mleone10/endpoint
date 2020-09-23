@@ -11,7 +11,8 @@ require (
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
 	github.com/go-chi/render v1.0.1
+	github.com/onsi/ginkgo v1.14.1 // indirect
+	github.com/onsi/gomega v1.10.2 // indirect
 	github.com/segmentio/ksuid v1.0.3
-	golang.org/x/net v0.0.0-20200822124328-c89045814202
-	google.golang.org/api v0.31.0
+	google.golang.org/api v0.31.0 // indirect
 )
