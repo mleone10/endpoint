@@ -1,4 +1,4 @@
-package server
+package internal
 
 import (
 	"log"
@@ -7,8 +7,10 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/render"
 	"github.com/mleone10/endpoint/internal/station"
 	"github.com/mleone10/endpoint/internal/user"
+	"github.com/mleone10/endpoint/internal/user/userserver"
 )
 
 // Server is a root-level http.Handler
@@ -34,7 +36,7 @@ func NewServer(db Datastore) *Server {
 
 	s.router.Use(cors.AllowAll().Handler)
 	s.router.Get("/health", s.handleHealth())
-	s.router.Mount("/user", user.NewServer(s.db))
+	s.router.Mount("/user", userserver.NewServer(s.logger, s.db))
 	s.router.Mount("/stations", station.NewServer())
 
 	return s
@@ -42,4 +44,14 @@ func NewServer(db Datastore) *Server {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
+}
+
+func (s *Server) handleHealth() http.HandlerFunc {
+	type health struct {
+		API bool `json:"api"`
+		DB  bool `json:"db"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		render.JSON(w, r, health{API: true, DB: s.db.Health()})
+	}
 }

@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/mleone10/endpoint/internal"
 	"github.com/mleone10/endpoint/internal/dynamo/mock"
-	"github.com/mleone10/endpoint/internal/server"
 )
 
 var s *httptest.Server
@@ -20,5 +20,6 @@ func TestMain(m *testing.M) {
 }
 
 func setupServer() {
-	s = httptest.NewServer(server.NewServer(mock.NewClient()))
+	os.Setenv("ENDPOINT_LOCAL", "true")
+	s = httptest.NewServer(internal.NewServer(mock.NewClient()))
 }

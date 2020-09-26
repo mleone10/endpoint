@@ -1,9 +1,17 @@
-package user
+package userserver
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"strings"
+
+	"github.com/mleone10/endpoint/internal/user"
 )
+
+type userIDKeyType string
+
+const userIDKey userIDKeyType = "userID"
 
 // OrMiddleware is a middleware which makes a runtime decision between two provided middleware.  If cond evaluates to true, middleware a is used, else middleware b is used.
 func OrMiddleware(cond bool, a, b func(next http.Handler) http.Handler) func(next http.Handler) http.Handler {
@@ -21,15 +29,13 @@ func AuthTokenVerifier() func(next http.Handler) http.Handler {
 			panic(fmt.Sprintf("error initializing auth middleware: %v", err))
 		}
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// TODO: Update Authorization header to include "Bearer" identifier
-			userID, err := authenticator.VerifyJWT(r.Context(), r.Header.Get("Authorization"))
+			userID, err := authenticator.VerifyJWT(r.Context(), strings.Split("Bearer ", r.Header.Get("Authorization"))[1])
 			if err != nil {
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)
 				return
 			}
 
-			ctx := NewContextWithID(r.Context(), NewID(userID))
-			next.ServeHTTP(w, r.Clone(ctx))
+			next.ServeHTTP(w, r.Clone(context.WithValue(r.Context(), userIDKey, user.ID(userID))))
 		})
 	}
 }
@@ -38,8 +44,16 @@ func AuthTokenVerifier() func(next http.Handler) http.Handler {
 func AuthStubber() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := NewContextWithID(r.Context(), NewID("testUserID"))
-			next.ServeHTTP(w, r.Clone(ctx))
+			next.ServeHTTP(w, r.Clone(context.WithValue(r.Context(), userIDKey, user.ID("testUserID"))))
 		})
 	}
+}
+
+// IDFromContext returns the ID stored in ctx, if any.
+func IDFromContext(ctx context.Context) (user.ID, error) {
+	uid, ok := ctx.Value(userIDKey).(user.ID)
+	if !ok {
+		return "", fmt.Errorf("could not retrieve user ID from context")
+	}
+	return uid, nil
 }
