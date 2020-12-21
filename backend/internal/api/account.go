@@ -8,7 +8,10 @@ import (
 	"github.com/mleone10/endpoint/internal/dynamo"
 )
 
-func (s *Server) handleGetUser() http.HandlerFunc {
+func (s *Server) handleListAPIKeys() http.HandlerFunc {
+	type res struct {
+		Keys []account.APIKey `json:"apiKeys"`
+	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		uid, err := idFromContext(r.Context())
 		if err != nil {
@@ -16,15 +19,18 @@ func (s *Server) handleGetUser() http.HandlerFunc {
 			return
 		}
 
-		u, err := s.db.GetUser(uid)
-		if err == dynamo.ErrorItemNotFound {
-			render.JSON(w, r, account.NewUser(uid))
-			return
-		} else if err != nil {
+		u, err := s.db.ListAPIKeys(uid)
+		if err != nil && err != dynamo.ErrorItemNotFound {
 			s.internalServerError(w, err)
 			return
 		}
 
-		render.JSON(w, r, u)
+		render.JSON(w, r, res{u})
+	}
+}
+
+func (s *Server) handlePostAPIKeys() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
 	}
 }

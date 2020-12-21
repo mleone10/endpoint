@@ -4,8 +4,15 @@ import (
 	"github.com/segmentio/ksuid"
 )
 
+// Datastore is a persistence layer for Users
+type Datastore interface {
+	SaveAPIKey(*APIKey) error
+	ListAPIKeys(ID) ([]APIKey, error)
+}
+
 // APIKey represents an internal and client-facing API key
 type APIKey struct {
+	ID       ID     `json:"id"`
 	Key      string `json:"key"`
 	ReadOnly bool   `json:"readOnly"`
 }
