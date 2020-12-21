@@ -1,4 +1,4 @@
-package userserver
+package api
 
 import (
 	"context"

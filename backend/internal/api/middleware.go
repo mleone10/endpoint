@@ -1,4 +1,4 @@
-package userserver
+package api
 
 import (
 	"context"
@@ -56,4 +56,15 @@ func IDFromContext(ctx context.Context) (user.ID, error) {
 		return "", fmt.Errorf("could not retrieve user ID from context")
 	}
 	return uid, nil
+}
+
+// KeyTokenVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
+func KeyTokenVerifier() func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Extract API key from Authorization header (separate method, so stations/ can use it)
+			// Use key and station ID to check database for permissions (read/write)
+			next.ServeHTTP(w, r)
+		})
+	}
 }

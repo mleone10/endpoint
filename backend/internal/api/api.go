@@ -1,4 +1,4 @@
-package internal
+package api
 
 import (
 	"log"
@@ -8,9 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/mleone10/endpoint/internal/station"
 	"github.com/mleone10/endpoint/internal/user"
-	"github.com/mleone10/endpoint/internal/user/userserver"
 )
 
 // Server is a root-level http.Handler
@@ -34,24 +32,25 @@ func NewServer(db Datastore) *Server {
 		db:     db,
 	}
 
+	_, isLocal := os.LookupEnv("ENDPOINT_LOCAL")
+
 	s.router.Use(cors.AllowAll().Handler)
 	s.router.Get("/health", s.handleHealth())
-	s.router.Mount("/user", userserver.NewServer(s.logger, s.db))
-	s.router.Mount("/stations", station.NewServer())
+	s.router.Route("/user", func(r chi.Router) {
+		r.Use(OrMiddleware(isLocal, AuthStubber(), AuthTokenVerifier()))
+		r.Get("/", s.handleGetUser())
+		r.Post("/", s.handlePostUser())
+	})
+	s.router.Route("/stations", func(r chi.Router) {
+		r.Use(KeyTokenVerifier())
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			render.NoContent(w, r)
+		})
+	})
 
 	return s
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router.ServeHTTP(w, r)
-}
-
-func (s *Server) handleHealth() http.HandlerFunc {
-	type health struct {
-		API bool `json:"api"`
-		DB  bool `json:"db"`
-	}
-	return func(w http.ResponseWriter, r *http.Request) {
-		render.JSON(w, r, health{API: true, DB: s.db.Health()})
-	}
 }
