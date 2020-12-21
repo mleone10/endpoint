@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/mleone10/endpoint/internal/account"
-	"github.com/mleone10/endpoint/internal/dynamo"
 )
 
 func (s *Server) handleListAPIKeys() http.HandlerFunc {
@@ -20,7 +19,7 @@ func (s *Server) handleListAPIKeys() http.HandlerFunc {
 		}
 
 		u, err := s.db.ListAPIKeys(uid)
-		if err != nil && err != dynamo.ErrorItemNotFound {
+		if err != nil {
 			s.internalServerError(w, err)
 			return
 		}

@@ -12,7 +12,6 @@ type Datastore interface {
 
 // APIKey represents an internal and client-facing API key
 type APIKey struct {
-	ID       ID     `json:"id"`
 	Key      string `json:"key"`
 	ReadOnly bool   `json:"readOnly"`
 }

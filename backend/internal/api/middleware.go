@@ -14,12 +14,12 @@ type userIDKeyType string
 const userIDKey userIDKeyType = "userID"
 
 // Authenticator describes a client which can validate an identity token JWT.
-type authenticator interface {
+type Authenticator interface {
 	VerifyJWT(context.Context, string) (string, error)
 }
 
 // authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
-func authTokenVerifier(auth authenticator) func(next http.Handler) http.Handler {
+func authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			userID, err := auth.VerifyJWT(r.Context(), strings.Split("Bearer ", r.Header.Get("Authorization"))[1])

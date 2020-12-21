@@ -1,9 +1,15 @@
 package dynamo
 
-import "github.com/mleone10/endpoint/internal/account"
+import (
+	"fmt"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/mleone10/endpoint/internal/account"
+)
 
 const (
-	skPrefixUser   = "USER"
 	skPrefixAPIKey = "KEY"
 )
 
@@ -25,8 +31,28 @@ func (c *Client) SaveAPIKey(apiKey *account.APIKey) error {
 }
 
 // ListAPIKeys returns a slice of APIKeys for a given account ID
-func (c *Client) ListAPIKeys(account.ID) ([]account.APIKey, error) {
-	return nil, nil
+func (c *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
+	uidKey, skKey := ":uid", ":skKey"
+	res, err := c.db.Query(&dynamodb.QueryInput{
+		TableName:              aws.String(endpointTableName),
+		KeyConditionExpression: aws.String(fmt.Sprintf("%s = %s and begins_with(%s, %s)", endpointPK, uidKey, endpointSK, skKey)),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			uidKey: {S: aws.String(id.String())},
+			skKey:  {S: aws.String(skPrefixAPIKey)},
+		},
+	})
+	if err != nil {
+		return nil, ErrorInternalServerError
+	}
+
+	ks := []account.APIKey{}
+	for _, i := range res.Items {
+		k := account.APIKey{}
+		dynamodbattribute.UnmarshalMap(i, &k)
+		ks = append(ks, k)
+	}
+
+	return ks, nil
 }
 
 // // SaveUser inserts a User into the database
@@ -81,44 +107,4 @@ func (c *Client) ListAPIKeys(account.ID) ([]account.APIKey, error) {
 // 	}
 
 // 	return nil
-// }
-
-// // GetUser retrieves a User from the database using the given ID
-// func (c *Client) GetUser(uid account.ID) (*account.User, error) {
-// 	uidKey := ":uid"
-// 	res, err := c.db.Query(&dynamodb.QueryInput{
-// 		TableName:              aws.String(endpointTableName),
-// 		KeyConditionExpression: aws.String(fmt.Sprintf("%s = %s", endpointPK, uidKey)),
-// 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-// 			uidKey: {
-// 				S: aws.String(uid.String()),
-// 			},
-// 		},
-// 	})
-// 	if err != nil {
-// 		return nil, fmt.Errorf("failed to retrieve user from database: %w", err)
-// 	}
-// 	if len(res.Items) == 0 {
-// 		return nil, ErrorItemNotFound
-// 	}
-
-// 	u := account.User{}
-// 	keys := []*account.APIKey{}
-// 	for _, i := range res.Items {
-// 		var sk string
-// 		dynamodbattribute.Unmarshal(i[endpointSK], &sk)
-// 		switch strings.Split(sk, "#")[0] {
-// 		case skPrefixUser:
-// 			userItem := User{}
-// 			dynamodbattribute.UnmarshalMap(i, &userItem)
-// 			u.ID = account.ID(userItem.PK)
-// 		case skPrefixAPIKey:
-// 			key := account.APIKey{}
-// 			dynamodbattribute.UnmarshalMap(i, &key)
-// 			keys = append(keys, &key)
-// 		}
-// 	}
-// 	u.APIKeys = keys
-
-// 	return &u, nil
 // }

@@ -18,6 +18,8 @@ var (
 	ErrorItemNotFound = fmt.Errorf("item not found")
 	// ErrorConflict is returned when an attempted write fails due to a condition or conflict with an existing resource.
 	ErrorConflict = fmt.Errorf("conflict with existing resource")
+	// ErrorInternalServerError is returned when an operation cannot be completed due to a server-side problem.
+	ErrorInternalServerError = fmt.Errorf("failed to perform operation")
 )
 
 // Client represents a DynamoDB accessor.
