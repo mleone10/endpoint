@@ -6,8 +6,8 @@ type User struct {
 	APIKeys []*APIKey `json:"apiKeys"`
 }
 
-// New returns an initialized user with the given ID.  The ID should correspond to the user's ID in the external authentication system.
-func New(id ID) *User {
+// NewUser returns an initialized user with the given ID.  The ID should correspond to the user's ID in the external authentication system.
+func NewUser(id ID) *User {
 	return &User{
 		ID: id,
 		APIKeys: []*APIKey{
