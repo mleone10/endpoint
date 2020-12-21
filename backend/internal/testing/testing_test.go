@@ -8,7 +8,8 @@ import (
 	"testing"
 
 	"github.com/mleone10/endpoint/internal/api"
-	"github.com/mleone10/endpoint/internal/dynamo/mock"
+	mockAuth "github.com/mleone10/endpoint/internal/auth/mock"
+	mockDb "github.com/mleone10/endpoint/internal/dynamo/mock"
 )
 
 var s *httptest.Server
@@ -21,5 +22,7 @@ func TestMain(m *testing.M) {
 
 func setupServer() {
 	os.Setenv("ENDPOINT_LOCAL", "true")
-	s = httptest.NewServer(api.NewServer(mock.NewClient()))
+	db := mockDb.NewClient()
+	authr, _ := mockAuth.NewAuthenticator()
+	s = httptest.NewServer(api.NewServer(db, authr))
 }

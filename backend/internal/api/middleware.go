@@ -13,38 +13,22 @@ type userIDKeyType string
 
 const userIDKey userIDKeyType = "userID"
 
-// OrMiddleware is a middleware which makes a runtime decision between two provided middleware.  If cond evaluates to true, middleware a is used, else middleware b is used.
-func OrMiddleware(cond bool, a, b func(next http.Handler) http.Handler) func(next http.Handler) http.Handler {
-	if cond {
-		return a
-	}
-	return b
+// Authenticator describes a client which can validate an identity token JWT.
+type Authenticator interface {
+	VerifyJWT(context.Context, string) (string, error)
 }
 
 // AuthTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
-func AuthTokenVerifier() func(next http.Handler) http.Handler {
+func AuthTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		authenticator, err := NewAuthenticator()
-		if err != nil {
-			panic(fmt.Sprintf("error initializing auth middleware: %v", err))
-		}
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			userID, err := authenticator.VerifyJWT(r.Context(), strings.Split("Bearer ", r.Header.Get("Authorization"))[1])
+			userID, err := auth.VerifyJWT(r.Context(), strings.Split("Bearer ", r.Header.Get("Authorization"))[1])
 			if err != nil {
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)
 				return
 			}
 
 			next.ServeHTTP(w, r.Clone(context.WithValue(r.Context(), userIDKey, user.ID(userID))))
-		})
-	}
-}
-
-// AuthStubber is a middleware which ignores the provided Authorization header and instead injects a static user ID into the request.
-func AuthStubber() func(next http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			next.ServeHTTP(w, r.Clone(context.WithValue(r.Context(), userIDKey, user.ID("testUserID"))))
 		})
 	}
 }

@@ -13,7 +13,11 @@ var db *dynamo.Client
 
 func init() {
 	db := dynamo.NewClient()
-	adapter = handlerfunc.New(api.NewServer(db).ServeHTTP)
+	authr, err := auth.NewAuthenticator()
+	if err != nil {
+		log.Panicf("Failed to initialize authenticator: %v", err)
+	}
+	adapter = handlerfunc.New(api.NewServer(db, authr).ServeHTTP)
 }
 
 func serverHandler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
