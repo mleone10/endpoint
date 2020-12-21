@@ -14,12 +14,12 @@ type userIDKeyType string
 const userIDKey userIDKeyType = "userID"
 
 // Authenticator describes a client which can validate an identity token JWT.
-type Authenticator interface {
+type authenticator interface {
 	VerifyJWT(context.Context, string) (string, error)
 }
 
-// AuthTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
-func AuthTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
+// authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
+func authTokenVerifier(auth authenticator) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			userID, err := auth.VerifyJWT(r.Context(), strings.Split("Bearer ", r.Header.Get("Authorization"))[1])
@@ -33,8 +33,8 @@ func AuthTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler 
 	}
 }
 
-// IDFromContext returns the ID stored in ctx, if any.
-func IDFromContext(ctx context.Context) (user.ID, error) {
+// idFromContext returns the ID stored in ctx, if any.
+func idFromContext(ctx context.Context) (user.ID, error) {
 	uid, ok := ctx.Value(userIDKey).(user.ID)
 	if !ok {
 		return "", fmt.Errorf("could not retrieve user ID from context")
@@ -42,8 +42,8 @@ func IDFromContext(ctx context.Context) (user.ID, error) {
 	return uid, nil
 }
 
-// KeyTokenVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
-func KeyTokenVerifier() func(next http.Handler) http.Handler {
+// keyTokenVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
+func keyTokenVerifier() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Extract API key from Authorization header (separate method, so stations/ can use it)

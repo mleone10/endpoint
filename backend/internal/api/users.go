@@ -11,7 +11,7 @@ import (
 
 func (s *Server) handleGetUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid, err := IDFromContext(r.Context())
+		uid, err := idFromContext(r.Context())
 		if err != nil {
 			log.Println(err)
 			http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -34,7 +34,7 @@ func (s *Server) handleGetUser() http.HandlerFunc {
 
 func (s *Server) handlePostUser() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid, err := IDFromContext(r.Context())
+		uid, err := idFromContext(r.Context())
 		if err != nil {
 			log.Println(err)
 			http.Error(w, "internal server error", http.StatusInternalServerError)

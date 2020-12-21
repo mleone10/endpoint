@@ -1,6 +1,6 @@
 module github.com/mleone10/endpoint
 
-go 1.13
+go 1.15
 
 require (
 	cloud.google.com/go/firestore v1.3.0 // indirect

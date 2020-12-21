@@ -1,10 +1,13 @@
 package main
 
 import (
+	"log"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/handlerfunc"
 	"github.com/mleone10/endpoint/internal/api"
+	"github.com/mleone10/endpoint/internal/auth"
 	"github.com/mleone10/endpoint/internal/dynamo"
 )
 

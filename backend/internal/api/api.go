@@ -25,7 +25,7 @@ type Datastore interface {
 }
 
 // NewServer returns an initialized Server
-func NewServer(db Datastore, authr Authenticator) *Server {
+func NewServer(db Datastore, authr authenticator) *Server {
 	s := &Server{
 		router: chi.NewRouter(),
 		logger: log.New(os.Stderr, "", log.LstdFlags),
@@ -35,13 +35,13 @@ func NewServer(db Datastore, authr Authenticator) *Server {
 	s.router.Use(cors.AllowAll().Handler)
 	s.router.Get("/health", s.handleHealth())
 	s.router.Route("/user", func(r chi.Router) {
-		r.Use(AuthTokenVerifier(authr))
+		r.Use(authTokenVerifier(authr))
 		r.Get("/", s.handleGetUser())
 		r.Get("/api-keys", s.handleGetAPIKeys())
 		r.Post("/api-keys", s.handlePostAPIKeys())
 	})
 	s.router.Route("/stations", func(r chi.Router) {
-		r.Use(KeyTokenVerifier())
+		r.Use(keyTokenVerifier())
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			render.NoContent(w, r)
 		})
