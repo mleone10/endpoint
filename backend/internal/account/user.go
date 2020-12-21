@@ -1,4 +1,4 @@
-package user
+package account
 
 // User represents data associated with a single Endpoint user
 type User struct {

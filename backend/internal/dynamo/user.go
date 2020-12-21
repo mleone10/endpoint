@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/mleone10/endpoint/internal/user"
+	"github.com/mleone10/endpoint/internal/account"
 )
 
 const (
@@ -29,7 +29,7 @@ type APIKey struct {
 }
 
 // SaveUser inserts a User into the database
-func (c *Client) SaveUser(u *user.User) error {
+func (c *Client) SaveUser(u *account.User) error {
 	transactItems := []*dynamodb.TransactWriteItem{}
 	for _, k := range u.APIKeys {
 		item, err := dynamodbattribute.MarshalMap(&APIKey{
@@ -83,13 +83,13 @@ func (c *Client) SaveUser(u *user.User) error {
 }
 
 // GetUser retrieves a User from the database using the given ID
-func (c *Client) GetUser(uid user.ID) (*user.User, error) {
+func (c *Client) GetUser(uid account.ID) (*account.User, error) {
 	uidKey := ":uid"
 	res, err := c.db.Query(&dynamodb.QueryInput{
 		TableName:              aws.String(endpointTableName),
 		KeyConditionExpression: aws.String(fmt.Sprintf("%s = %s", endpointPK, uidKey)),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			uidKey: &dynamodb.AttributeValue{
+			uidKey: {
 				S: aws.String(uid.String()),
 			},
 		},
@@ -101,8 +101,8 @@ func (c *Client) GetUser(uid user.ID) (*user.User, error) {
 		return nil, ErrorItemNotFound
 	}
 
-	u := user.User{}
-	keys := []*user.APIKey{}
+	u := account.User{}
+	keys := []*account.APIKey{}
 	for _, i := range res.Items {
 		var sk string
 		dynamodbattribute.Unmarshal(i[endpointSK], &sk)
@@ -110,9 +110,9 @@ func (c *Client) GetUser(uid user.ID) (*user.User, error) {
 		case skPrefixUser:
 			userItem := User{}
 			dynamodbattribute.UnmarshalMap(i, &userItem)
-			u.ID = user.ID(userItem.PK)
+			u.ID = account.ID(userItem.PK)
 		case skPrefixAPIKey:
-			key := user.APIKey{}
+			key := account.APIKey{}
 			dynamodbattribute.UnmarshalMap(i, &key)
 			keys = append(keys, &key)
 		}

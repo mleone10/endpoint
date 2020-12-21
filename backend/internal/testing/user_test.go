@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/mleone10/endpoint/internal/user"
+	"github.com/mleone10/endpoint/internal/account"
 )
 
 func TestGetUser(t *testing.T) {
@@ -22,7 +22,7 @@ func TestGetUser(t *testing.T) {
 	}
 
 	defer res.Body.Close()
-	u := user.User{}
+	u := account.User{}
 	err = json.NewDecoder(res.Body).Decode(&u)
 	if err != nil {
 		t.Errorf("could not parse GET /user response")

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/mleone10/endpoint/internal/user"
+	"github.com/mleone10/endpoint/internal/account"
 )
 
 type userIDKeyType string
@@ -28,14 +28,14 @@ func authTokenVerifier(auth authenticator) func(next http.Handler) http.Handler 
 				return
 			}
 
-			next.ServeHTTP(w, r.Clone(context.WithValue(r.Context(), userIDKey, user.ID(userID))))
+			next.ServeHTTP(w, r.Clone(context.WithValue(r.Context(), userIDKey, account.ID(userID))))
 		})
 	}
 }
 
 // idFromContext returns the ID stored in ctx, if any.
-func idFromContext(ctx context.Context) (user.ID, error) {
-	uid, ok := ctx.Value(userIDKey).(user.ID)
+func idFromContext(ctx context.Context) (account.ID, error) {
+	uid, ok := ctx.Value(userIDKey).(account.ID)
 	if !ok {
 		return "", fmt.Errorf("could not retrieve user ID from context")
 	}

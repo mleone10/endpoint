@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/mleone10/endpoint/internal/account"
 	"github.com/mleone10/endpoint/internal/dynamo"
-	"github.com/mleone10/endpoint/internal/user"
 )
 
 func (s *Server) handleGetUser() http.HandlerFunc {
@@ -18,7 +18,7 @@ func (s *Server) handleGetUser() http.HandlerFunc {
 
 		u, err := s.db.GetUser(uid)
 		if err == dynamo.ErrorItemNotFound {
-			render.JSON(w, r, user.NewUser(uid))
+			render.JSON(w, r, account.NewUser(uid))
 			return
 		} else if err != nil {
 			s.internalServerError(w, err)
