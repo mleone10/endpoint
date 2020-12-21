@@ -48,10 +48,9 @@ func (s *Server) handlePostUser() http.HandlerFunc {
 			if err == dynamo.ErrorConflict {
 				http.Error(w, "user already exists", http.StatusConflict)
 				return
-			} else {
-				http.Error(w, "internal server error", http.StatusInternalServerError)
-				return
 			}
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
 		}
 
 		render.JSON(w, r, u)
