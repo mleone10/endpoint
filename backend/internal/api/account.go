@@ -29,6 +29,31 @@ func (s *Server) handleListAPIKeys() http.HandlerFunc {
 }
 
 func (s *Server) handlePostAPIKeys() http.HandlerFunc {
+	type req struct {
+		ReadOnly bool `json:"readOnly"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		uid, err := idFromContext(r.Context())
+		if err != nil {
+			s.internalServerError(w, err)
+			return
+		}
+
+		var req req
+		render.DecodeJSON(r.Body, &req)
+
+		k := account.NewAPIKey(req.ReadOnly)
+		err = s.db.SaveAPIKey(uid, k)
+		if err != nil {
+			s.internalServerError(w, err)
+			return
+		}
+
+		render.NoContent(w, r)
+	}
+}
+
+func (s *Server) handleDeleteAPIKeys() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 	}

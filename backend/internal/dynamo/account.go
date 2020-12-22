@@ -26,7 +26,27 @@ type APIKey struct {
 }
 
 // SaveAPIKey upserts an APIKey in the Dynamo database
-func (c *Client) SaveAPIKey(apiKey *account.APIKey) error {
+func (c *Client) SaveAPIKey(id account.ID, apiKey *account.APIKey) error {
+	item, err := dynamodbattribute.MarshalMap(&APIKey{
+		itemKey: itemKey{
+			PK: id.String(),
+			SK: fmt.Sprintf("%s#%s", skPrefixAPIKey, apiKey.Key),
+		},
+		Key:      apiKey.Key,
+		ReadOnly: apiKey.ReadOnly,
+	})
+	if err != nil {
+		return fmt.Errorf("could not marshal APIKey to DynamoDB item: %v", err)
+	}
+
+	_, err = c.db.PutItem(&dynamodb.PutItemInput{
+		TableName: aws.String(endpointTableName),
+		Item:      item,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to persist APIKey to database: %v", err)
+	}
+
 	return nil
 }
 
@@ -54,57 +74,3 @@ func (c *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
 
 	return ks, nil
 }
-
-// // SaveUser inserts a User into the database
-// func (c *Client) SaveUser(u *account.User) error {
-// 	transactItems := []*dynamodb.TransactWriteItem{}
-// 	for _, k := range u.APIKeys {
-// 		item, err := dynamodbattribute.MarshalMap(&APIKey{
-// 			itemKey: itemKey{
-// 				PK: u.ID.String(),
-// 				SK: fmt.Sprintf("%s#%s", skPrefixAPIKey, k.Key),
-// 			},
-// 			Key:      k.Key,
-// 			ReadOnly: k.ReadOnly,
-// 		})
-// 		if err != nil {
-// 			return fmt.Errorf("could not marshal APIKey to DynamoDB item")
-// 		}
-
-// 		transactItems = append(transactItems, &dynamodb.TransactWriteItem{
-// 			Put: &dynamodb.Put{
-// 				TableName: aws.String(endpointTableName),
-// 				Item:      item,
-// 			},
-// 		})
-// 	}
-
-// 	user, err := dynamodbattribute.MarshalMap(&User{
-// 		itemKey: itemKey{
-// 			PK: u.ID.String(),
-// 			SK: skPrefixUser,
-// 		},
-// 	})
-// 	if err != nil {
-// 		return fmt.Errorf("could not marshal user info to User item")
-// 	}
-// 	transactItems = append(transactItems, &dynamodb.TransactWriteItem{
-// 		Put: &dynamodb.Put{
-// 			TableName:           aws.String(endpointTableName),
-// 			Item:                user,
-// 			ConditionExpression: aws.String(fmt.Sprintf("attribute_not_exists(%s)", endpointSK)),
-// 		},
-// 	})
-
-// 	_, err = c.db.TransactWriteItems(&dynamodb.TransactWriteItemsInput{
-// 		TransactItems: transactItems,
-// 	})
-// 	if err != nil {
-// 		if awserr, ok := err.(awserr.Error); ok && awserr.Code() == dynamodb.ErrCodeTransactionCanceledException {
-// 			return ErrorConflict
-// 		}
-// 		return fmt.Errorf("could not persist user to database: %w", err)
-// 	}
-
-// 	return nil
-// }

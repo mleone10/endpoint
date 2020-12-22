@@ -5,7 +5,7 @@ import (
 )
 
 // SaveAPIKey implements a mock call to persist an APIKey to the database.
-func (m *Client) SaveAPIKey(apiKey *account.APIKey) error {
+func (m *Client) SaveAPIKey(id account.ID, apiKey *account.APIKey) error {
 	return nil
 }
 

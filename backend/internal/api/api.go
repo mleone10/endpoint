@@ -38,6 +38,7 @@ func NewServer(db Datastore, authr Authenticator) *Server {
 		r.Use(authTokenVerifier(authr))
 		r.Get("/api-keys", s.handleListAPIKeys())
 		r.Post("/api-keys", s.handlePostAPIKeys())
+		r.Delete("/api-keys", s.handleDeleteAPIKeys())
 	})
 	s.router.Route("/stations", func(r chi.Router) {
 		r.Use(keyTokenVerifier())

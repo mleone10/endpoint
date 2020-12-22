@@ -6,7 +6,7 @@ import (
 
 // Datastore is a persistence layer for Users
 type Datastore interface {
-	SaveAPIKey(*APIKey) error
+	SaveAPIKey(ID, *APIKey) error
 	ListAPIKeys(ID) ([]APIKey, error)
 }
 
