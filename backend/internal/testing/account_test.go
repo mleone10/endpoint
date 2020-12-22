@@ -3,6 +3,7 @@
 package testing
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 func TestListAPIKeys(t *testing.T) {
 	res, err := http.Get(fmt.Sprintf("%s/account/api-keys", s.URL))
 	if err != nil {
-		t.Fatal("failed to make GET /account/api-keys request")
+		t.Error("failed to make GET /account/api-keys request")
 	}
 
 	if res.StatusCode != http.StatusOK {
@@ -32,5 +33,17 @@ func TestListAPIKeys(t *testing.T) {
 
 	if len(ks.Keys) != 2 {
 		t.Errorf("incorrect number of API keys; got %v, wanted 2", len(ks.Keys))
+	}
+}
+
+func TestPostAPIKeys(t *testing.T) {
+	reqBody := bytes.NewBuffer([]byte(`{"readOnly": true}`))
+	res, err := http.Post(fmt.Sprintf("%s/account/api-keys", s.URL), "application/json", reqBody)
+	if err != nil {
+		t.Fatal("failed to make POST /account/api-keys request")
+	}
+
+	if res.StatusCode != http.StatusNoContent {
+		t.Errorf("POST /account/api-keys returned %v status, but expected %v", res.StatusCode, http.StatusNoContent)
 	}
 }
