@@ -74,3 +74,8 @@ func (c *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
 
 	return ks, nil
 }
+
+// DeleteAPIKey removes a given APIKey from a user's database record, if it exists.
+func DeleteAPIKey(account.ID, *account.APIKey) error {
+	return nil
+}

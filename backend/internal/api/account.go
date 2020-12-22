@@ -10,6 +10,7 @@ import (
 type accountDatastore interface {
 	SaveAPIKey(account.ID, *account.APIKey) error
 	ListAPIKeys(account.ID) ([]account.APIKey, error)
+	DeleteAPIKey(account.ID, *account.APIKey) error
 }
 
 func (s *Server) handleListAPIKeys() http.HandlerFunc {
@@ -55,6 +56,12 @@ func (s *Server) handlePostAPIKeys() http.HandlerFunc {
 		}
 
 		render.NoContent(w, r)
+	}
+}
+
+func (s *Server) handleDeleteAPIKey() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
 	}
 }
 

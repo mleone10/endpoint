@@ -35,9 +35,14 @@ func NewServer(db Datastore, authr Authenticator) *Server {
 	s.router.Get("/health", s.handleHealth())
 	s.router.Route("/account", func(r chi.Router) {
 		r.Use(authTokenVerifier(authr))
-		r.Get("/api-keys", s.handleListAPIKeys())
-		r.Post("/api-keys", s.handlePostAPIKeys())
-		r.Delete("/api-keys", s.handleDeleteAPIKeys())
+		r.Route("/api-keys", func(r chi.Router) {
+			r.Get("/", s.handleListAPIKeys())
+			r.Post("/", s.handlePostAPIKeys())
+			r.Delete("/", s.handleDeleteAPIKeys())
+			r.Route("/{apiKey}", func(r chi.Router) {
+				r.Delete("/", s.handleDeleteAPIKey())
+			})
+		})
 	})
 	s.router.Route("/stations", func(r chi.Router) {
 		r.Use(keyTokenVerifier())
