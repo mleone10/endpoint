@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/mleone10/endpoint/internal/account"
 )
 
 // Server is a root-level http.Handler
@@ -20,7 +19,7 @@ type Server struct {
 
 // Datastore describes the persistence operations required by the HTTP server
 type Datastore interface {
-	account.Datastore
+	accountDatastore
 	Health() bool
 }
 

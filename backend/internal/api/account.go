@@ -7,6 +7,11 @@ import (
 	"github.com/mleone10/endpoint/internal/account"
 )
 
+type accountDatastore interface {
+	SaveAPIKey(account.ID, *account.APIKey) error
+	ListAPIKeys(account.ID) ([]account.APIKey, error)
+}
+
 func (s *Server) handleListAPIKeys() http.HandlerFunc {
 	type res struct {
 		Keys []account.APIKey `json:"apiKeys"`
