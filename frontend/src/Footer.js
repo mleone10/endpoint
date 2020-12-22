@@ -10,7 +10,7 @@ class Footer extends React.Component {
         Copyright &copy; 2020 <a href="https://marioleone.me">Mario Leone</a>{" "}
         &middot;{" "}
         <a href="https://twitter.com/endpointgame">
-          <FontAwesomeIcon icon={faTwitter} />
+          <FontAwesomeIcon className="icon" icon={faTwitter} />
         </a>{" "}
         &middot; Hosted on{" "}
         <a href="https://github.com/mleone10/endpoint">GitHub</a>
