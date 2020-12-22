@@ -40,7 +40,7 @@ func NewServer(db Datastore, authr Authenticator) *Server {
 			r.Get("/", s.handleListAPIKeys())
 			r.Post("/", s.handlePostAPIKeys())
 			r.Delete("/", s.handleDeleteAPIKeys())
-			r.Route("/{apiKey}", func(r chi.Router) {
+			r.Route(fmt.Sprintf("/{%s}", urlParamAPIKey), func(r chi.Router) {
 				r.Delete("/", s.handleDeleteAPIKey())
 			})
 		})

@@ -4,12 +4,7 @@ import (
 	"context"
 	"net/http"
 	"strings"
-
-	"github.com/go-chi/chi"
-	"github.com/mleone10/endpoint/internal/account"
 )
-
-const urlParamAccountID = "accountID"
 
 // Authenticator describes a client which can validate an identity token JWT.
 type Authenticator interface {
@@ -29,10 +24,6 @@ func authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler 
 			next.ServeHTTP(w, r)
 		})
 	}
-}
-
-func getAccountID(r *http.Request) account.ID {
-	return account.ID(chi.URLParam(r, urlParamAccountID))
 }
 
 // keyTokenVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
