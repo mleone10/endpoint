@@ -18,11 +18,7 @@ func (s *Server) handleListAPIKeys() http.HandlerFunc {
 		Keys []account.APIKey `json:"apiKeys"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid, err := idFromContext(r.Context())
-		if err != nil {
-			s.internalServerError(w, err)
-			return
-		}
+		uid := getAccountID(r)
 
 		u, err := s.db.ListAPIKeys(uid)
 		if err != nil {
@@ -39,17 +35,13 @@ func (s *Server) handlePostAPIKeys() http.HandlerFunc {
 		ReadOnly bool `json:"readOnly"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		uid, err := idFromContext(r.Context())
-		if err != nil {
-			s.internalServerError(w, err)
-			return
-		}
+		uid := getAccountID(r)
 
 		var req req
 		render.DecodeJSON(r.Body, &req)
 
 		k := account.NewAPIKey(req.ReadOnly)
-		err = s.db.SaveAPIKey(uid, k)
+		err := s.db.SaveAPIKey(uid, k)
 		if err != nil {
 			s.internalServerError(w, err)
 			return

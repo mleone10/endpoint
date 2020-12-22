@@ -13,7 +13,7 @@ import (
 )
 
 func TestListAPIKeys(t *testing.T) {
-	res, err := http.Get(fmt.Sprintf("%s/account/api-keys", s.URL))
+	res, err := http.Get(fmt.Sprintf("%s/accounts/testUserID/api-keys", s.URL))
 	if err != nil {
 		t.Error("failed to make GET /account/api-keys request")
 	}
@@ -36,9 +36,20 @@ func TestListAPIKeys(t *testing.T) {
 	}
 }
 
+func TestGetAPIKeysForDifferentAccount(t *testing.T) {
+	res, err := http.Get(fmt.Sprintf("%s/accounts/incorrectUserID/api-keys", s.URL))
+	if err != nil {
+		t.Error("failed to make GET /account/api-keys request")
+	}
+
+	if res.StatusCode != http.StatusForbidden {
+		t.Errorf("GET /account/api-keys returned wrong status code; got %v, wanted %v", res.Status, http.StatusOK)
+	}
+}
+
 func TestPostAPIKeys(t *testing.T) {
 	reqBody := bytes.NewBuffer([]byte(`{"readOnly": true}`))
-	res, err := http.Post(fmt.Sprintf("%s/account/api-keys", s.URL), "application/json", reqBody)
+	res, err := http.Post(fmt.Sprintf("%s/accounts/testUserID/api-keys", s.URL), "application/json", reqBody)
 	if err != nil {
 		t.Fatal("failed to make POST /account/api-keys request")
 	}
