@@ -26,7 +26,7 @@ type APIKey struct {
 }
 
 // SaveAPIKey upserts an APIKey in the Dynamo database
-func (c *Client) SaveAPIKey(id account.ID, apiKey *account.APIKey) error {
+func (c *Client) SaveAPIKey(id account.ID, apiKey account.APIKey) error {
 	item, err := dynamodbattribute.MarshalMap(&APIKey{
 		itemKey: itemKey{
 			PK: id.String(),
@@ -76,6 +76,14 @@ func (c *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
 }
 
 // DeleteAPIKey removes a given APIKey from a user's database record, if it exists.
-func (c *Client) DeleteAPIKey(id account.ID, apiKey *account.APIKey) error {
-	return nil
+func (c *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
+	_, err := c.db.DeleteItem(&dynamodb.DeleteItemInput{
+		TableName: aws.String(endpointTableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			endpointPK: {S: aws.String(id.String())},
+			endpointSK: {S: aws.String(fmt.Sprintf("%s#%s", skPrefixAPIKey, apiKey.Key))},
+		},
+	})
+
+	return err
 }

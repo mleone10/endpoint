@@ -5,7 +5,7 @@ import (
 )
 
 // SaveAPIKey implements a mock call to persist an APIKey to the database.
-func (m *Client) SaveAPIKey(id account.ID, apiKey *account.APIKey) error {
+func (m *Client) SaveAPIKey(id account.ID, apiKey account.APIKey) error {
 	return nil
 }
 
@@ -18,6 +18,6 @@ func (m *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
 }
 
 // DeleteAPIKey implements a mock call to delete a given user's APIKey.
-func (m *Client) DeleteAPIKey(id account.ID, apiKey *account.APIKey) error {
+func (m *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
 	return nil
 }

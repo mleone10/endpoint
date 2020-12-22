@@ -11,8 +11,8 @@ type APIKey struct {
 }
 
 // NewAPIKey returns an initialized APIKey
-func NewAPIKey(readOnly bool) *APIKey {
-	return &APIKey{
+func NewAPIKey(readOnly bool) APIKey {
+	return APIKey{
 		Key:      ksuid.New().String(),
 		ReadOnly: readOnly,
 	}
