@@ -15,7 +15,20 @@ type Authenticator interface {
 func authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			userID, err := auth.VerifyJWT(r.Context(), strings.Split("Bearer ", r.Header.Get("Authorization"))[1])
+			authHeader := r.Header.Get("Authorization")
+
+			if authHeader == "" {
+				http.Error(w, "missing authorization header", http.StatusUnauthorized)
+				return
+			}
+
+			splitAuthHeader := strings.Split("Bearer ", authHeader)
+			if len(splitAuthHeader) != 1 {
+				http.Error(w, "improperly formatted authorization header", http.StatusUnauthorized)
+				return
+			}
+
+			userID, err := auth.VerifyJWT(r.Context(), splitAuthHeader[0])
 			if err != nil || userID != getAccountID(r).String() {
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)
 				return

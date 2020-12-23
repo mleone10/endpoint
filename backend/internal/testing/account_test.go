@@ -12,14 +12,22 @@ import (
 	"github.com/mleone10/endpoint/internal/account"
 )
 
+const (
+	headerAuthKey   = "Authorization"
+	headerAuthValue = "Bearer testIDToken"
+)
+
 func TestListAPIKeys(t *testing.T) {
-	res, err := http.Get(fmt.Sprintf("%s/accounts/testUserID/api-keys", s.URL))
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/accounts/testUserID/api-keys", s.URL), nil)
+	req.Header.Set(headerAuthKey, headerAuthValue)
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		t.Error("failed to make GET /account/api-keys request")
+		t.Fatal("failed to make GET /account/api-keys request")
 	}
 
 	if res.StatusCode != http.StatusOK {
-		t.Errorf("GET /account/api-keys returned wrong status code; got %v, wanted %v", res.Status, http.StatusOK)
+		t.Fatalf("GET /account/api-keys returned wrong status code; got %v, wanted %v", res.Status, http.StatusOK)
 	}
 
 	defer res.Body.Close()
@@ -28,33 +36,38 @@ func TestListAPIKeys(t *testing.T) {
 	}{}
 	err = json.NewDecoder(res.Body).Decode(&ks)
 	if err != nil {
-		t.Errorf("could not parse GET /account/api-keys response")
+		t.Fatal("could not parse GET /account/api-keys response")
 	}
 
 	if len(ks.Keys) != 2 {
-		t.Errorf("incorrect number of API keys; got %v, wanted 2", len(ks.Keys))
+		t.Fatalf("incorrect number of API keys; got %v, wanted 2", len(ks.Keys))
 	}
 }
 
 func TestGetAPIKeysForDifferentAccount(t *testing.T) {
-	res, err := http.Get(fmt.Sprintf("%s/accounts/incorrectUserID/api-keys", s.URL))
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/accounts/incorrectUserID/api-keys", s.URL), nil)
+	req.Header.Set(headerAuthKey, headerAuthValue)
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		t.Error("failed to make GET /account/api-keys request")
+		t.Fatal("failed to make GET /account/api-keys request")
 	}
 
 	if res.StatusCode != http.StatusForbidden {
-		t.Errorf("GET /account/api-keys returned wrong status code; got %v, wanted %v", res.Status, http.StatusOK)
+		t.Fatalf("GET /account/api-keys returned wrong status code; got %v, wanted %v", res.Status, http.StatusOK)
 	}
 }
 
 func TestPostAPIKeys(t *testing.T) {
-	reqBody := bytes.NewBuffer([]byte(`{"readOnly": true}`))
-	res, err := http.Post(fmt.Sprintf("%s/accounts/testUserID/api-keys", s.URL), "application/json", reqBody)
+	req, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/accounts/testUserID/api-keys", s.URL), bytes.NewBuffer([]byte(`{"readOnly": true}`)))
+	req.Header.Set(headerAuthKey, headerAuthValue)
+
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		t.Fatal("failed to make POST /account/api-keys request")
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		t.Errorf("POST /account/api-keys returned %v status, but expected %v", res.StatusCode, http.StatusNoContent)
+		t.Fatalf("POST /account/api-keys returned %v status, but expected %v", res.StatusCode, http.StatusNoContent)
 	}
 }
