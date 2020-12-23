@@ -23,14 +23,14 @@ func (s *Server) authTokenVerifier(auth Authenticator) func(next http.Handler) h
 				return
 			}
 
-			splitAuthHeader := strings.Split("Bearer ", authHeader)
-			if len(splitAuthHeader) != 1 {
-				s.logger.Printf("authorzation header value invalid: %s", authHeader)
+			splitAuthHeader := strings.Split(authHeader, " ")
+			if len(splitAuthHeader) != 2 {
+				s.logger.Printf("authorzation header value invalid: %s", splitAuthHeader)
 				http.Error(w, "improperly formatted authorization header", http.StatusUnauthorized)
 				return
 			}
 
-			userID, err := auth.VerifyJWT(r.Context(), splitAuthHeader[0])
+			userID, err := auth.VerifyJWT(r.Context(), splitAuthHeader[1])
 			if err != nil {
 				s.logger.Print(err)
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)

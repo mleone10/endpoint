@@ -13,7 +13,7 @@ class AccountManagement extends React.Component {
       fetch(
         `https://api.endpointgame.com/accounts/${this.props.uid}/api-keys`,
         {
-          headers: { Authorization: this.props.idToken },
+          headers: { Authorization: `Bearer ${this.props.idToken}` },
         }
       )
         .then((res) => res.json())
@@ -27,7 +27,7 @@ class AccountManagement extends React.Component {
   handleCreateNewApiKey = (nickname, readOnly) => {
     fetch(`https://api.endpointgame.com/accounts/${this.props.uid}/api-keys`, {
       method: "POST",
-      headers: { Authorization: this.props.idToken },
+      headers: { Authorization: `Bearer ${this.props.idToken}` },
       body: JSON.stringify({
         readOnly: readOnly,
         nickname: nickname,
@@ -43,7 +43,7 @@ class AccountManagement extends React.Component {
       `https://api.endpointgame.com/accounts/${this.props.uid}/api-keys/${keyValue}`,
       {
         method: "DELETE",
-        headers: { Authorization: this.props.idToken },
+        headers: { Authorization: `Bearer ${this.props.idToken}` },
       }
     ).then(() => {
       this.fetchApiKeys(this.props.idToken);
