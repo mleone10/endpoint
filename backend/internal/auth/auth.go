@@ -30,13 +30,13 @@ func (a *Authenticator) VerifyJWT(ctx context.Context, jwt string) (string, erro
 	client, err := a.fbApp.Auth(ctx)
 	if err != nil {
 		// TODO: Find a way to differentiate between this error (HTTP 500) and the next one (HTTP 403)
-		return "", fmt.Errorf("error verifying authentication token: %w", err)
+		return "", fmt.Errorf("error verifying authentication token: %v", err)
 	}
 
 	// Verify the token, returning an HTTP 403 if it cannot be.
 	verifiedToken, err := client.VerifyIDToken(ctx, jwt)
 	if err != nil {
-		return "", fmt.Errorf("failed to verify authentication token")
+		return "", fmt.Errorf("failed to verify authentication token: %w", err)
 	}
 
 	return verifiedToken.UID, nil
