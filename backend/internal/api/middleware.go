@@ -29,8 +29,13 @@ func authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler 
 			}
 
 			userID, err := auth.VerifyJWT(r.Context(), splitAuthHeader[0])
-			if err != nil || userID != getAccountID(r).String() {
+			if err != nil {
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)
+				return
+			}
+
+			if userID != getAccountID(r).String() {
+				http.Error(w, "not authorized for given account", http.StatusForbidden)
 				return
 			}
 
