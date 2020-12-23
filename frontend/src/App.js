@@ -15,7 +15,6 @@ class App extends React.Component {
   state = {};
 
   handleLogin = (uid, idToken) => {
-    console.log(uid);
     this.setState({ uid: uid, idToken: idToken });
   };
 

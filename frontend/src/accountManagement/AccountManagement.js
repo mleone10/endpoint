@@ -4,8 +4,7 @@ import ApiKeyCreateForm from "./ApiKeyCreateForm";
 import "./accountManagement.css";
 
 class AccountManagement extends React.Component {
-  // TODO: Unset data on sign out
-  state = {};
+  state = { apiKeys: [] };
 
   fetchApiKeys = () => {
     // TODO: Create a way to easily point to a local API for development
@@ -18,7 +17,7 @@ class AccountManagement extends React.Component {
       )
         .then((res) => res.json())
         .then((data) => {
-          this.setState({ apiKeys: data.keys });
+          this.setState({ apiKeys: data.apiKeys });
         });
     }
     // TODO: Handle failure
@@ -33,7 +32,7 @@ class AccountManagement extends React.Component {
         nickname: nickname,
       }),
     }).then(() => {
-      this.fetchApiKeys(this.props.idToken);
+      this.fetchApiKeys();
     });
     // TODO: Handle failure
   };
@@ -46,30 +45,26 @@ class AccountManagement extends React.Component {
         headers: { Authorization: `Bearer ${this.props.idToken}` },
       }
     ).then(() => {
-      this.fetchApiKeys(this.props.idToken);
+      this.fetchApiKeys();
     });
     // TODO: Handle failure
   };
 
-  componentDidMount() {
-    if (this.props.idToken !== undefined) {
-      this.fetchApiKeys(this.props.idToken);
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
     if (
-      this.props.idToken !== prevProps.idToken ||
-      (this.state.apiKeys !== undefined &&
-        prevState.apiKeys !== undefined &&
-        this.state.apiKeys.length !== prevState.apiKeys.length)
+      this.props.idToken === undefined &&
+      prevProps.idToken !== this.props.idToken
     ) {
-      this.fetchApiKeys(this.props.idToken);
+      // If we just logged out, clear the list of API Keys
+      this.setState({ apiKeys: [] });
+    } else if (this.props.idToken !== prevProps.idToken) {
+      // If we just logged in, fetch the list of API Keys
+      this.fetchApiKeys();
     }
   }
 
   render() {
-    if (this.state.apiKeys !== undefined) {
+    if (this.props.idToken !== undefined) {
       return (
         <div>
           <ApiKeysList

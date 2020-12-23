@@ -32,15 +32,6 @@ class ApiKeyCreateForm extends React.Component {
         <p>create new api key</p>
         <form onSubmit={this.handleSubmit}>
           <label>
-            nickname:
-            <input
-              type="text"
-              value={this.state.nickname}
-              onChange={this.handleChange}
-              name="nickname"
-            />
-          </label>
-          <label>
             read only:
             <input
               type="checkbox"
