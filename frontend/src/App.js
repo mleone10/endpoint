@@ -9,12 +9,14 @@ import Documentation from "./Documentation";
 import AccountManagement from "./accountManagement/AccountManagement";
 
 import "./App.css";
+import AuthButton from "./AuthButton";
 
 class App extends React.Component {
   state = {};
 
-  handleLogin = (idToken) => {
-    this.setState({ idToken: idToken });
+  handleLogin = (uid, idToken) => {
+    console.log(uid);
+    this.setState({ uid: uid, idToken: idToken });
   };
 
   handleLogout = () => {
@@ -24,9 +26,10 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <TopBar onLogin={this.handleLogin} onLogout={this.handleLogout} />
+        <AuthButton onLogin={this.handleLogin} onLogout={this.handleLogout} />
+        <TopBar />
         <NavBar />
-        <Content idToken={this.state.idToken} />
+        <Content uid={this.state.uid} idToken={this.state.idToken} />
         <Footer />
       </Router>
     );
@@ -40,7 +43,6 @@ function TopBar(props) {
       <h1 className="title">
         <Link to="/">endpoint://</Link>
       </h1>
-      {/* <AuthButton onLogin={props.onLogin} onLogout={props.onLogout} /> */}
     </div>
   );
 }
@@ -76,7 +78,7 @@ function Content(props) {
         <Documentation />
       </Route>
       <Route exact={true} path="/acct">
-        <AccountManagement idToken={props.idToken} />
+        <AccountManagement uid={props.uid} idToken={props.idToken} />
       </Route>
     </div>
   );

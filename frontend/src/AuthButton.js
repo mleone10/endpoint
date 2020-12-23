@@ -17,6 +17,7 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 // TODO: Convert sign-in to display in a modal
 class AuthButton extends React.Component {
   uiConfig = {
+    signInFlow: "popup",
     signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
     callbacks: {
       signInSuccessWithAuthResult: () => false,
@@ -24,12 +25,18 @@ class AuthButton extends React.Component {
   };
 
   componentDidMount() {
+    var onLogin = this.props.onLogin;
     this.unregisterAuthObserver = firebaseApp
       .auth()
       .onAuthStateChanged((user) => {
         this.setState({ isSignedIn: !!user });
         if (user) {
-          firebase.auth().currentUser.getIdToken().then(this.props.onLogin);
+          firebase
+            .auth()
+            .currentUser.getIdToken()
+            .then(function (idToken) {
+              onLogin(user.uid, idToken);
+            });
         } else {
           this.props.onLogout();
         }
@@ -46,23 +53,29 @@ class AuthButton extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="authButton">
         {this.state.isSignedIn !== undefined && !this.state.isSignedIn && (
-          <div>
-            <StyledFirebaseAuth
-              uiConfig={this.uiConfig}
-              firebaseAuth={firebase.auth()}
-            />
-          </div>
+          <StyledFirebaseAuth
+            className="signInButton"
+            uiConfig={this.uiConfig}
+            firebaseAuth={firebase.auth()}
+          />
         )}
-        {this.state.isSignedIn && (
-          <div>
-            <button onClick={() => firebaseApp.auth().signOut()}>
-              Sign-out
-            </button>
-          </div>
-        )}
+        {this.state.isSignedIn && <SignOutButton />}
       </div>
+    );
+  }
+}
+
+class SignOutButton extends React.Component {
+  render() {
+    return (
+      <button
+        className="signOutButton"
+        onClick={() => firebaseApp.auth().signOut()}
+      >
+        Sign Out
+      </button>
     );
   }
 }

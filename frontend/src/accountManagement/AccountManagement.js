@@ -1,6 +1,7 @@
 import React from "react";
 import ApiKeysList from "./ApiKeysList";
 import ApiKeyCreateForm from "./ApiKeyCreateForm";
+import "./accountManagement.css";
 
 class AccountManagement extends React.Component {
   // TODO: Unset data on sign out
@@ -9,9 +10,12 @@ class AccountManagement extends React.Component {
   fetchApiKeys = () => {
     // TODO: Create a way to easily point to a local API for development
     if (this.props.idToken !== undefined) {
-      fetch("https://api.endpointgame.com/user/api-keys", {
-        headers: { Authorization: this.props.idToken },
-      })
+      fetch(
+        `https://api.endpointgame.com/accounts/${this.props.uid}/api-keys`,
+        {
+          headers: { Authorization: this.props.idToken },
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           this.setState({ apiKeys: data.keys });
@@ -21,7 +25,7 @@ class AccountManagement extends React.Component {
   };
 
   handleCreateNewApiKey = (nickname, readOnly) => {
-    fetch("https://api.endpointgame.com/user/api-keys", {
+    fetch(`https://api.endpointgame.com/accounts/${this.props.uid}/api-keys`, {
       method: "POST",
       headers: { Authorization: this.props.idToken },
       body: JSON.stringify({
@@ -35,10 +39,13 @@ class AccountManagement extends React.Component {
   };
 
   handleDeleteApiKey = (keyValue) => {
-    fetch(`https://api.endpointgame.com/user/api-keys/${keyValue}`, {
-      method: "DELETE",
-      headers: { Authorization: this.props.idToken },
-    }).then(() => {
+    fetch(
+      `https://api.endpointgame.com/accounts/${this.props.uid}/api-keys/${keyValue}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: this.props.idToken },
+      }
+    ).then(() => {
       this.fetchApiKeys(this.props.idToken);
     });
     // TODO: Handle failure
@@ -75,7 +82,7 @@ class AccountManagement extends React.Component {
     } else {
       return (
         <div className="content">
-          <h3>Log in to manage your account.</h3>
+          <h3 className="loginMsg">Log in to manage your account.</h3>
         </div>
       );
     }
