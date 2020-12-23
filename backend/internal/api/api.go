@@ -35,7 +35,7 @@ func NewServer(db Datastore, authr Authenticator) *Server {
 	s.router.Use(cors.AllowAll().Handler)
 	s.router.Get("/health", s.handleHealth())
 	s.router.Route(fmt.Sprintf("/accounts/{%s}", urlParamAccountID), func(r chi.Router) {
-		r.Use(authTokenVerifier(authr))
+		r.Use(s.authTokenVerifier(authr))
 		r.Route("/api-keys", func(r chi.Router) {
 			r.Get("/", s.handleListAPIKeys())
 			r.Post("/", s.handlePostAPIKeys())
@@ -46,7 +46,7 @@ func NewServer(db Datastore, authr Authenticator) *Server {
 		})
 	})
 	s.router.Route("/stations", func(r chi.Router) {
-		r.Use(keyTokenVerifier())
+		r.Use(s.keyTokenVerifier())
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			render.NoContent(w, r)
 		})

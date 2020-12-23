@@ -12,24 +12,27 @@ type Authenticator interface {
 }
 
 // authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
-func authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
+func (s *Server) authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")
 
 			if authHeader == "" {
+				s.logger.Print("no authorization header found")
 				http.Error(w, "missing authorization header", http.StatusUnauthorized)
 				return
 			}
 
 			splitAuthHeader := strings.Split("Bearer ", authHeader)
 			if len(splitAuthHeader) != 1 {
+				s.logger.Printf("authorzation header value invalid: %s", authHeader)
 				http.Error(w, "improperly formatted authorization header", http.StatusUnauthorized)
 				return
 			}
 
 			userID, err := auth.VerifyJWT(r.Context(), splitAuthHeader[0])
 			if err != nil {
+				s.logger.Print(err)
 				http.Error(w, "failed to verify authentication token", http.StatusForbidden)
 				return
 			}
@@ -45,7 +48,7 @@ func authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler 
 }
 
 // keyTokenVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
-func keyTokenVerifier() func(next http.Handler) http.Handler {
+func (s *Server) keyTokenVerifier() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Extract API key from Authorization header (separate method, so stations/ can use it)
