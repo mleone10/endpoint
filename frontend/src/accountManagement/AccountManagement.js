@@ -23,13 +23,12 @@ class AccountManagement extends React.Component {
     // TODO: Handle failure
   };
 
-  handleCreateNewApiKey = (nickname, readOnly) => {
+  handleCreateNewApiKey = (readOnly) => {
     fetch(`https://api.endpointgame.com/accounts/${this.props.uid}/api-keys`, {
       method: "POST",
       headers: { Authorization: `Bearer ${this.props.idToken}` },
       body: JSON.stringify({
         readOnly: readOnly,
-        nickname: nickname,
       }),
     }).then(() => {
       this.fetchApiKeys();
@@ -50,7 +49,7 @@ class AccountManagement extends React.Component {
     // TODO: Handle failure
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (
       this.props.idToken === undefined &&
       prevProps.idToken !== this.props.idToken
