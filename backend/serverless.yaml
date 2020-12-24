@@ -44,15 +44,26 @@ resources:
       Properties:
         TableName: endpoint
         KeySchema:
-          - AttributeName: pk
+          - AttributeName: &pk pk
             KeyType: HASH
-          - AttributeName: sk
+          - AttributeName: &sk sk
             KeyType: RANGE
         AttributeDefinitions:
-          - AttributeName: pk
+          - AttributeName: *pk
             AttributeType: S
-          - AttributeName: sk
+          - AttributeName: *sk
             AttributeType: S
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: keyUsers
+            KeySchema:
+              - AttributeName: *sk
+                KeyType: HASH
+              - AttributeName: *pk
+                KeyType: RANGE
+            Projection: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
