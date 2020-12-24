@@ -63,7 +63,8 @@ resources:
                 KeyType: HASH
               - AttributeName: *pk
                 KeyType: RANGE
-            Projection: KEYS_ONLY
+            Projection:
+              ProjectionType: KEYS_ONLY
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
