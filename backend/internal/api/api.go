@@ -25,7 +25,7 @@ type Datastore interface {
 }
 
 // NewServer returns an initialized Server
-func NewServer(db Datastore, authr Authenticator) *Server {
+func NewServer(db Datastore, authr JWTVerifier) *Server {
 	s := &Server{
 		router: chi.NewRouter(),
 		logger: log.New(os.Stderr, "", log.LstdFlags),

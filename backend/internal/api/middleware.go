@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// Authenticator describes a client which can validate an identity token JWT.
-type Authenticator interface {
+// JWTVerifier describes a client which can validate an identity token JWT.
+type JWTVerifier interface {
 	VerifyJWT(context.Context, string) (string, error)
 }
 
 // authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
-func (s *Server) authTokenVerifier(auth Authenticator) func(next http.Handler) http.Handler {
+func (s *Server) authTokenVerifier(auth JWTVerifier) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")

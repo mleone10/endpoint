@@ -19,8 +19,8 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", api.NewServer(db, authr)))
 }
 
-func initAuthenticator() api.Authenticator {
-	var authr api.Authenticator
+func initAuthenticator() api.JWTVerifier {
+	var authr api.JWTVerifier
 	authr, err := firebase.NewAuthenticator()
 	if _, ok := os.LookupEnv("ENDPOINT_LOCAL"); ok {
 		authr, err = mock.NewAuthenticator()
