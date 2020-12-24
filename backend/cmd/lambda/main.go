@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/handlerfunc"
 	"github.com/mleone10/endpoint/internal/api"
-	"github.com/mleone10/endpoint/internal/auth"
 	"github.com/mleone10/endpoint/internal/dynamo"
+	"github.com/mleone10/endpoint/internal/firebase"
 )
 
 var adapter *handlerfunc.HandlerFuncAdapter
@@ -16,7 +16,7 @@ var db *dynamo.Client
 
 func init() {
 	db := dynamo.NewClient()
-	authr, err := auth.NewAuthenticator()
+	authr, err := firebase.NewAuthenticator()
 	if err != nil {
 		log.Panicf("Failed to initialize authenticator: %v", err)
 	}

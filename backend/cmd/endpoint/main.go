@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/mleone10/endpoint/internal/api"
-	"github.com/mleone10/endpoint/internal/auth"
-	"github.com/mleone10/endpoint/internal/auth/mock"
 	"github.com/mleone10/endpoint/internal/dynamo"
+	"github.com/mleone10/endpoint/internal/firebase"
+	"github.com/mleone10/endpoint/internal/firebase/mock"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 
 func initAuthenticator() api.Authenticator {
 	var authr api.Authenticator
-	authr, err := auth.NewAuthenticator()
+	authr, err := firebase.NewAuthenticator()
 	if _, ok := os.LookupEnv("ENDPOINT_LOCAL"); ok {
 		authr, err = mock.NewAuthenticator()
 	}
