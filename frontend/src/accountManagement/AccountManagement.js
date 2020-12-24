@@ -49,6 +49,10 @@ class AccountManagement extends React.Component {
     // TODO: Handle failure
   };
 
+  componentDidMount() {
+    this.fetchApiKeys();
+  }
+
   componentDidUpdate(prevProps) {
     if (
       this.props.idToken === undefined &&
