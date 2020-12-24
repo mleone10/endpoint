@@ -1,3 +1,59 @@
 h3 .loginMessage {
   text-align: center;
 }
+
+.acct {
+  max-width: 25em;
+  margin: auto;
+}
+
+.acct .apiKeyCreateForm {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 0.25em;
+  padding: 0 1em 0.5em 1em;
+}
+
+.acct .formTitle {
+  margin-bottom: 0.25em;
+}
+
+.acct .submit {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.5em 2em;
+  font-weight: 600;
+  border-radius: 0.25em;
+  border-width: 1px;
+  float: right;
+}
+
+.acct .noKeysFound {
+  text-align: center;
+}
+
+.acct .apiKeysList {
+  padding: 0;
+  list-style-type: none;
+}
+
+.acct .apiKeyItem {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.25em;
+  padding: 0 1em 0.5em 1em;
+  overflow: hidden;
+  margin-bottom: 1em;
+}
+
+.apiKeyItem .apiKey {
+  color: black;
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.apiKeyItem .readOnly {
+  color: black;
+  margin: 0;
+}
+
+.apiKeyItem .deleteButton {
+  float: right;
+}

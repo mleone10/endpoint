@@ -65,12 +65,12 @@ class AccountManagement extends React.Component {
   render() {
     if (this.props.idToken !== undefined) {
       return (
-        <div>
+        <div className="content acct">
+          <ApiKeyCreateForm onCreateNewApiKey={this.handleCreateNewApiKey} />
           <ApiKeysList
             apiKeys={this.state.apiKeys}
             onDeleteApiKey={this.handleDeleteApiKey}
           />
-          <ApiKeyCreateForm onCreateNewApiKey={this.handleCreateNewApiKey} />
         </div>
       );
     } else {

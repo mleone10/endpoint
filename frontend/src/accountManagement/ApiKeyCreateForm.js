@@ -1,7 +1,7 @@
 import React from "react";
 
 class ApiKeyCreateForm extends React.Component {
-  initialState = { nickname: "", readOnly: false };
+  initialState = { readOnly: false };
 
   constructor(props) {
     super(props);
@@ -12,27 +12,22 @@ class ApiKeyCreateForm extends React.Component {
   }
 
   handleChange(event) {
-    this.setState({
-      [event.target.name]:
-        event.target.type === "checkbox"
-          ? event.target.checked
-          : event.target.value,
-    });
+    this.setState({ readOnly: event.target.checked });
   }
 
   handleSubmit(event) {
-    this.props.onCreateNewApiKey(this.state.nickname, this.state.readOnly);
+    this.props.onCreateNewApiKey(this.state.readOnly);
     this.setState(this.initialState);
     event.preventDefault();
   }
 
   render() {
     return (
-      <div>
-        <p>create new api key</p>
+      <div className="apiKeyCreateForm">
+        <h3 className="formTitle">Create a new API Key</h3>
         <form onSubmit={this.handleSubmit}>
           <label>
-            read only:
+            Read Only:
             <input
               type="checkbox"
               checked={this.state.readOnly}
@@ -40,7 +35,7 @@ class ApiKeyCreateForm extends React.Component {
               name="readOnly"
             />
           </label>
-          <input type="submit" />
+          <input className="submit" type="submit" />
         </form>
       </div>
     );

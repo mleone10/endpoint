@@ -13,7 +13,7 @@ class DeleteButton extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form className="deleteButton" onSubmit={this.handleSubmit}>
         <button type="submit">Delete</button>
       </form>
     );

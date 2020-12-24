@@ -5,19 +5,18 @@ class ApiKeysList extends React.Component {
   render() {
     if (this.props.apiKeys !== undefined && this.props.apiKeys.length > 0) {
       const keys = this.props.apiKeys.map((key) => (
-        <li key={key.key}>
-          <p>
-            {key.nickname} - {key.readOnly ? "true" : "false"} - {key.key}
-          </p>
+        <li key={key.key} className="apiKeyItem">
+          <p className="apiKey">{key.key}</p>
+          {key.readOnly && <p className="readOnly">Read Only</p>}
           <DeleteButton
             keyValue={key.key}
             onDeleteApiKey={this.props.onDeleteApiKey}
           />
         </li>
       ));
-      return <ul>{keys}</ul>;
+      return <ul className="apiKeysList">{keys}</ul>;
     } else {
-      return <p>no api keys found</p>;
+      return <h3 className="noKeysFound">No API keys found</h3>;
     }
   }
 }
