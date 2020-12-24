@@ -57,3 +57,15 @@ h3 .loginMessage {
 .apiKeyItem .deleteButton {
   float: right;
 }
+
+.acct .deleteKeysForm {
+  text-align: center;
+}
+
+.acct .deleteKeysButton {
+  font-weight: 600;
+  border-radius: 0.25em;
+  border-width: 1px;
+  text-align: center;
+  padding: 0.5em 2em;
+}

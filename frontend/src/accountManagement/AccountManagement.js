@@ -49,6 +49,17 @@ class AccountManagement extends React.Component {
     // TODO: Handle failure
   };
 
+  handleDeleteApiKeys = (event) => {
+    fetch(`https://api.endpointgame.com/accounts/${this.props.uid}/api-keys`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${this.props.idToken}` },
+    }).then(() => {
+      this.fetchApiKeys();
+    });
+    // TODO: Handle failure
+    event.preventDefault();
+  };
+
   componentDidMount() {
     this.fetchApiKeys();
   }
@@ -74,6 +85,7 @@ class AccountManagement extends React.Component {
           <ApiKeysList
             apiKeys={this.state.apiKeys}
             onDeleteApiKey={this.handleDeleteApiKey}
+            onDeleteApiKeys={this.handleDeleteApiKeys}
           />
         </div>
       );
