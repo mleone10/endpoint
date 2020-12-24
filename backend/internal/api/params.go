@@ -7,15 +7,26 @@ import (
 	"github.com/mleone10/endpoint/internal/account"
 )
 
+type urlParamKey string
+type headerKey string
+
 const (
-	urlParamAccountID = "accountID"
-	urlParamAPIKey    = "apiKey"
+	urlParamAccountID = urlParamKey("accountID")
+	urlParamAPIKey    = urlParamKey("apiKey")
+	urlParamStationID = urlParamKey("stationID")
+
+	headerAPIKey        = headerKey("x-api-key")
+	headerAuthorization = headerKey("Authorization")
 )
 
-func getAccountID(r *http.Request) account.ID {
-	return account.ID(chi.URLParam(r, urlParamAccountID))
+func getURLParam(r *http.Request, p urlParamKey) string {
+	return chi.URLParam(r, string(p))
 }
 
-func getAPIKey(r *http.Request) string {
-	return chi.URLParam(r, urlParamAPIKey)
+func getHeader(r *http.Request, h headerKey) string {
+	return r.Header.Get(string(h))
+}
+
+func getAccountID(r *http.Request) account.ID {
+	return account.ID(getURLParam(r, urlParamAccountID))
 }

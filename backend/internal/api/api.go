@@ -46,7 +46,7 @@ func NewServer(db Datastore, authr JWTVerifier) *Server {
 		})
 	})
 	s.router.Route("/stations", func(r chi.Router) {
-		r.Use(s.keyTokenVerifier())
+		r.Use(s.keyVerifier())
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			render.NoContent(w, r)
 		})

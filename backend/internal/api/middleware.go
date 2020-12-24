@@ -11,11 +11,15 @@ type JWTVerifier interface {
 	VerifyJWT(context.Context, string) (string, error)
 }
 
+// KeyVerifier describes a client which can confirm that a given key has access to the indicated resource.
+type KeyVerifier interface {
+}
+
 // authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
 func (s *Server) authTokenVerifier(auth JWTVerifier) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			authHeader := r.Header.Get("Authorization")
+			authHeader := getHeader(r, headerAuthorization)
 
 			if authHeader == "" {
 				s.logger.Print("no authorization header found")
@@ -47,12 +51,10 @@ func (s *Server) authTokenVerifier(auth JWTVerifier) func(next http.Handler) htt
 	}
 }
 
-// keyTokenVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
-func (s *Server) keyTokenVerifier() func(next http.Handler) http.Handler {
+// keyVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
+func (s *Server) keyVerifier() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Extract API key from Authorization header (separate method, so stations/ can use it)
-			// Use key and station ID to check database for permissions (read/write)
 			next.ServeHTTP(w, r)
 		})
 	}

@@ -55,7 +55,7 @@ func (s *Server) handlePostAPIKeys() http.HandlerFunc {
 func (s *Server) handleDeleteAPIKey() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountID := getAccountID(r)
-		apiKey := getAPIKey(r)
+		apiKey := getHeader(r, headerAPIKey)
 
 		err := s.db.DeleteAPIKey(accountID, account.APIKey{Key: apiKey})
 		if err != nil {
