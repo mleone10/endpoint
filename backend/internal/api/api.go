@@ -49,6 +49,7 @@ func NewServer(db Datastore, authr JWTVerifier) *Server {
 	s.router.Route("/stations", func(r chi.Router) {
 		r.Use(s.keyPermissionMapper(s.db))
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			log.Println(getCtxPermission(r))
 			render.NoContent(w, r)
 		})
 	})

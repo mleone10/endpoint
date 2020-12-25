@@ -38,3 +38,8 @@ func getAccountID(r *http.Request) account.ID {
 func reqWithCtxValue(r *http.Request, k ctxKey, v interface{}) *http.Request {
 	return r.Clone(context.WithValue(r.Context(), k, v))
 }
+
+func getCtxPermission(r *http.Request) account.Permission {
+	perm, _ := r.Context().Value(ctxKeyPermission).(account.Permission)
+	return perm
+}

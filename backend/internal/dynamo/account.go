@@ -127,7 +127,7 @@ func (c *Client) GetKeyPermission(a string) (account.Permission, error) {
 	dynamodbattribute.UnmarshalMap(res.Items[0], &item)
 
 	return account.Permission{
-		ID:       account.ID(item.SK),
+		ID:       account.ID(item.PK),
 		ReadOnly: item.ReadOnly,
 	}, nil
 }
