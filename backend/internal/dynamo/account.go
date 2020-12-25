@@ -11,6 +11,8 @@ import (
 
 const (
 	skPrefixAPIKey = "KEY"
+
+	gsiKeyUsers = "keyUsers"
 )
 
 // User represents a user's basic info in the database
@@ -86,4 +88,37 @@ func (c *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
 	})
 
 	return err
+}
+
+// GetAccountID queries the database for the account ID which owns a given API Key.
+func (c *Client) GetAccountID(a string) (account.ID, error) {
+	if a == "" {
+		return "", fmt.Errorf("must provide non-empty API key")
+	}
+
+	apiKeyKey := ":key"
+	res, err := c.db.Query(&dynamodb.QueryInput{
+		TableName:              aws.String(endpointTableName),
+		IndexName:              aws.String(gsiKeyUsers),
+		KeyConditionExpression: aws.String(fmt.Sprintf("%s = %s", endpointSK, apiKeyKey)),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			apiKeyKey: {S: aws.String(fmt.Sprintf("%s#%s", skPrefixAPIKey, a))},
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if len(res.Items) == 0 {
+		return "", ErrorItemNotFound
+	}
+
+	if len(res.Items) > 1 {
+		return "", fmt.Errorf("more than one account ID found for given API key [%s]", a)
+	}
+
+	var item itemKey
+	dynamodbattribute.UnmarshalMap(res.Items[0], &item)
+
+	return account.ID(item.SK), nil
 }

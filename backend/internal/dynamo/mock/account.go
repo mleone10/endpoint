@@ -21,3 +21,8 @@ func (m *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
 func (m *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
 	return nil
 }
+
+// GetAccountID implements a mock call to return an account ID given an API Key.
+func (m *Client) GetAccountID(a string) (account.ID, error) {
+	return "testUserID", nil
+}

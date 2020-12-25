@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -9,8 +10,11 @@ import (
 
 type urlParamKey string
 type headerKey string
+type ctxKey string
 
 const (
+	ctxKeyAccountID = ctxKey("accountID")
+
 	urlParamAccountID = urlParamKey("accountID")
 	urlParamAPIKey    = urlParamKey("apiKey")
 	urlParamStationID = urlParamKey("stationID")
@@ -29,4 +33,8 @@ func getHeader(r *http.Request, h headerKey) string {
 
 func getAccountID(r *http.Request) account.ID {
 	return account.ID(getURLParam(r, urlParamAccountID))
+}
+
+func reqWithCtxValue(r *http.Request, k ctxKey, v interface{}) *http.Request {
+	return r.Clone(context.WithValue(r.Context(), k, v))
 }

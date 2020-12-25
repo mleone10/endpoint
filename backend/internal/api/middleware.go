@@ -2,8 +2,12 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/mleone10/endpoint/internal/account"
+	"github.com/mleone10/endpoint/internal/dynamo"
 )
 
 // JWTVerifier describes a client which can validate an identity token JWT.
@@ -11,8 +15,9 @@ type JWTVerifier interface {
 	VerifyJWT(context.Context, string) (string, error)
 }
 
-// KeyVerifier describes a client which can confirm that a given key has access to the indicated resource.
-type KeyVerifier interface {
+// keyAccountMapper describes a client which can look up the account ID corresponding to a given API Key.
+type keyAccountMapper interface {
+	GetAccountID(a string) (account.ID, error)
 }
 
 // authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
@@ -51,11 +56,27 @@ func (s *Server) authTokenVerifier(auth JWTVerifier) func(next http.Handler) htt
 	}
 }
 
-// keyVerifier is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
-func (s *Server) keyVerifier() func(next http.Handler) http.Handler {
+// keyAccountMapper is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
+func (s *Server) keyAccountMapper(m keyAccountMapper) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			next.ServeHTTP(w, r)
+			a := getHeader(r, headerAPIKey)
+			if a == "" {
+				http.Error(w, "api key not found", http.StatusUnauthorized)
+				return
+			}
+
+			u, err := m.GetAccountID(a)
+			if err != nil && err == dynamo.ErrorItemNotFound {
+				http.Error(w, fmt.Sprintf("no account id found for given api key [%s]", a), http.StatusUnauthorized)
+				return
+			} else if err != nil {
+				s.logger.Printf("api key lookup failed: %v", err)
+				http.Error(w, "failed to map api key to account id", http.StatusInternalServerError)
+				return
+			}
+
+			next.ServeHTTP(w, reqWithCtxValue(r, ctxKeyAccountID, u))
 		})
 	}
 }
