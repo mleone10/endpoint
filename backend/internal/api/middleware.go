@@ -16,8 +16,8 @@ type JWTVerifier interface {
 }
 
 // keyAccountMapper describes a client which can look up the account ID corresponding to a given API Key.
-type keyAccountMapper interface {
-	GetAccountID(a string) (account.ID, error)
+type keyPermissionMapper interface {
+	GetKeyPermission(a string) (account.Permission, error)
 }
 
 // authTokenVerifier is a middleware which verifies an Authorization header JWT using the Firebase Admin SDK.
@@ -56,8 +56,8 @@ func (s *Server) authTokenVerifier(auth JWTVerifier) func(next http.Handler) htt
 	}
 }
 
-// keyAccountMapper is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
-func (s *Server) keyAccountMapper(m keyAccountMapper) func(next http.Handler) http.Handler {
+// keyPermissionMapper is a middleware which confirms that the given API key has sufficient permissions to perform the target operation.
+func (s *Server) keyPermissionMapper(m keyPermissionMapper) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			a := getHeader(r, headerAPIKey)
@@ -66,7 +66,7 @@ func (s *Server) keyAccountMapper(m keyAccountMapper) func(next http.Handler) ht
 				return
 			}
 
-			u, err := m.GetAccountID(a)
+			p, err := m.GetKeyPermission(a)
 			if err != nil && err == dynamo.ErrorItemNotFound {
 				http.Error(w, fmt.Sprintf("no account id found for given api key [%s]", a), http.StatusUnauthorized)
 				return
@@ -76,7 +76,7 @@ func (s *Server) keyAccountMapper(m keyAccountMapper) func(next http.Handler) ht
 				return
 			}
 
-			next.ServeHTTP(w, reqWithCtxValue(r, ctxKeyAccountID, u))
+			next.ServeHTTP(w, reqWithCtxValue(r, ctxKeyPermission, p))
 		})
 	}
 }

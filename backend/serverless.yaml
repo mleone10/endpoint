@@ -64,7 +64,9 @@ resources:
               - AttributeName: *pk
                 KeyType: RANGE
             Projection:
-              ProjectionType: KEYS_ONLY
+              ProjectionType: INCLUDE
+              NonKeyAttributes:
+                - readOnly
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1

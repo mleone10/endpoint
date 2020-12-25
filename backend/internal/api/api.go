@@ -21,7 +21,7 @@ type Server struct {
 // Datastore describes the persistence operations required by the HTTP server
 type Datastore interface {
 	accountDatastore
-	keyAccountMapper
+	keyPermissionMapper
 	Health() bool
 }
 
@@ -47,7 +47,7 @@ func NewServer(db Datastore, authr JWTVerifier) *Server {
 		})
 	})
 	s.router.Route("/stations", func(r chi.Router) {
-		r.Use(s.keyAccountMapper(s.db))
+		r.Use(s.keyPermissionMapper(s.db))
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			render.NoContent(w, r)
 		})

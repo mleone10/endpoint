@@ -22,7 +22,9 @@ func (m *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
 	return nil
 }
 
-// GetAccountID implements a mock call to return an account ID given an API Key.
-func (m *Client) GetAccountID(a string) (account.ID, error) {
-	return "testUserID", nil
+// GetKeyPermission implements a mock call to return the Permissions for a given APIKey..
+func (m *Client) GetKeyPermission(a string) (account.Permission, error) {
+	return account.Permission{
+		ID:       account.ID("testUserID"),
+		ReadOnly: true}, nil
 }

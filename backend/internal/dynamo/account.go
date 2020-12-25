@@ -15,21 +15,27 @@ const (
 	gsiKeyUsers = "keyUsers"
 )
 
-// User represents a user's basic info in the database
+// User represents a user's basic info in the database.
 type User struct {
 	itemKey
 }
 
-// APIKey represents an API key database item
-type APIKey struct {
+// APIKeyItem represents an API key database item.
+type APIKeyItem struct {
 	itemKey
 	Key      string `json:"key"`
 	ReadOnly bool   `json:"readOnly"`
 }
 
-// SaveAPIKey upserts an APIKey in the Dynamo database
+// KeyUserItem represents a Key-User database item.
+type KeyUserItem struct {
+	itemKey
+	ReadOnly bool `json:"readOnly"`
+}
+
+// SaveAPIKey upserts an APIKey in the Dynamo database.
 func (c *Client) SaveAPIKey(id account.ID, apiKey account.APIKey) error {
-	item, err := dynamodbattribute.MarshalMap(&APIKey{
+	item, err := dynamodbattribute.MarshalMap(&APIKeyItem{
 		itemKey: itemKey{
 			PK: id.String(),
 			SK: fmt.Sprintf("%s#%s", skPrefixAPIKey, apiKey.Key),
@@ -52,7 +58,7 @@ func (c *Client) SaveAPIKey(id account.ID, apiKey account.APIKey) error {
 	return nil
 }
 
-// ListAPIKeys returns a slice of APIKeys for a given account ID
+// ListAPIKeys returns a slice of APIKeys for a given account ID.
 func (c *Client) ListAPIKeys(id account.ID) ([]account.APIKey, error) {
 	uidKey, skKey := ":uid", ":skKey"
 	res, err := c.db.Query(&dynamodb.QueryInput{
@@ -90,10 +96,10 @@ func (c *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
 	return err
 }
 
-// GetAccountID queries the database for the account ID which owns a given API Key.
-func (c *Client) GetAccountID(a string) (account.ID, error) {
+// GetKeyPermission queries the database for the Permission granted by a given APIKey.
+func (c *Client) GetKeyPermission(a string) (account.Permission, error) {
 	if a == "" {
-		return "", fmt.Errorf("must provide non-empty API key")
+		return account.Permission{}, fmt.Errorf("must provide non-empty API key")
 	}
 
 	apiKeyKey := ":key"
@@ -106,19 +112,22 @@ func (c *Client) GetAccountID(a string) (account.ID, error) {
 		},
 	})
 	if err != nil {
-		return "", err
+		return account.Permission{}, err
 	}
 
 	if len(res.Items) == 0 {
-		return "", ErrorItemNotFound
+		return account.Permission{}, ErrorItemNotFound
 	}
 
 	if len(res.Items) > 1 {
-		return "", fmt.Errorf("more than one account ID found for given API key [%s]", a)
+		return account.Permission{}, fmt.Errorf("more than one account ID found for given API key [%s]", a)
 	}
 
-	var item itemKey
+	var item KeyUserItem
 	dynamodbattribute.UnmarshalMap(res.Items[0], &item)
 
-	return account.ID(item.SK), nil
+	return account.Permission{
+		ID:       account.ID(item.SK),
+		ReadOnly: item.ReadOnly,
+	}, nil
 }

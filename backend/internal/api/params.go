@@ -13,7 +13,7 @@ type headerKey string
 type ctxKey string
 
 const (
-	ctxKeyAccountID = ctxKey("accountID")
+	ctxKeyPermission = ctxKey("permission")
 
 	urlParamAccountID = urlParamKey("accountID")
 	urlParamAPIKey    = urlParamKey("apiKey")
