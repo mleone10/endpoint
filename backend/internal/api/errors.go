@@ -7,3 +7,8 @@ func (s *Server) internalServerError(w http.ResponseWriter, err error) {
 	http.Error(w, "internal server error", http.StatusInternalServerError)
 	return
 }
+
+func (s *Server) forbidden(w http.ResponseWriter) {
+	http.Error(w, "operation forbidden with given api key", http.StatusForbidden)
+	return
+}

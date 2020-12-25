@@ -80,3 +80,21 @@ func (s *Server) keyPermissionMapper(m keyPermissionMapper) func(next http.Handl
 		})
 	}
 }
+
+func (s *Server) permittedOperation() func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			perm, ok := getCtxPermission(r)
+			if !ok {
+				s.internalServerError(w, fmt.Errorf("failed to extract permission from context"))
+			}
+
+			if perm.ReadOnly && isWriteReq(r) {
+				s.forbidden(w)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+}

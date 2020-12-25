@@ -23,6 +23,13 @@ const (
 	headerAuthorization = headerKey("Authorization")
 )
 
+var writeMethods = map[string]bool{
+	http.MethodPost:   true,
+	http.MethodPut:    true,
+	http.MethodDelete: true,
+	http.MethodPatch:  true,
+}
+
 func getURLParam(r *http.Request, p urlParamKey) string {
 	return chi.URLParam(r, string(p))
 }
@@ -39,7 +46,11 @@ func reqWithCtxValue(r *http.Request, k ctxKey, v interface{}) *http.Request {
 	return r.Clone(context.WithValue(r.Context(), k, v))
 }
 
-func getCtxPermission(r *http.Request) account.Permission {
-	perm, _ := r.Context().Value(ctxKeyPermission).(account.Permission)
-	return perm
+func getCtxPermission(r *http.Request) (account.Permission, bool) {
+	perm, ok := r.Context().Value(ctxKeyPermission).(account.Permission)
+	return perm, ok
+}
+
+func isWriteReq(r *http.Request) bool {
+	return writeMethods[r.Method]
 }
