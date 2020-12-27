@@ -90,6 +90,17 @@ func New() Station {
 	}
 }
 
+// NetProduction returns the aggregate production rates for the whole station
+func (s Station) NetProduction() Production {
+	p := Production{}
+	for _, m := range s.Modules {
+		for res, rate := range m.Production {
+			p[res] += rate
+		}
+	}
+	return p
+}
+
 func newQuantity(init Amount) Quantity {
 	return Quantity{
 		Amount: init,

@@ -56,8 +56,9 @@ func (s *Server) handleGetStation() http.HandlerFunc {
 		Type station.ModuleType `json:"type"`
 	}
 	type res struct {
-		ID      station.ID `json:"id"`
-		Modules []module   `json:"modules"`
+		ID         station.ID         `json:"id"`
+		Modules    []module           `json:"modules"`
+		Production station.Production `json:"production"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		sid := getURLParam(r, urlParamStationID)
@@ -80,8 +81,9 @@ func (s *Server) handleGetStation() http.HandlerFunc {
 			ms = append(ms, module{ID: m.ID, Type: m.Type})
 		}
 		render.JSON(w, r, res{
-			ID:      station.ID,
-			Modules: ms,
+			ID:         station.ID,
+			Modules:    ms,
+			Production: station.NetProduction(),
 		})
 	}
 }

@@ -62,8 +62,9 @@ func TestGetStation(t *testing.T) {
 
 	defer res.Body.Close()
 	s := struct {
-		ID      station.ID `json:"id"`
-		Modules []struct {
+		ID         station.ID         `json:"id"`
+		Production station.Production `json:"production"`
+		Modules    []struct {
 			ID   station.ID         `json:"id"`
 			Type station.ModuleType `json:"type"`
 		} `json:"modules"`
@@ -77,6 +78,7 @@ func TestGetStation(t *testing.T) {
 	test.AssertEquals(t, 1, len(s.Modules))
 	test.AssertEquals(t, station.ModuleType("command"), s.Modules[0].Type)
 	test.AssertNotEquals(t, "", s.Modules[0].ID)
+	test.AssertEquals(t, station.Rate(5.0), s.Production[station.ResourceResearch])
 }
 
 func TestDeleteStation(t *testing.T) {
