@@ -20,6 +20,8 @@ var (
 	ErrorConflict = fmt.Errorf("conflict with existing resource")
 	// ErrorInternalServerError is returned when an operation cannot be completed due to a server-side problem.
 	ErrorInternalServerError = fmt.Errorf("failed to perform operation")
+	// ErrorInvalidID is returned when a given account ID is empty or otherwise invalid.
+	ErrorInvalidID = fmt.Errorf("invalid account id")
 )
 
 // Client represents a DynamoDB accessor.
