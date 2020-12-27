@@ -75,8 +75,6 @@ func (s *Server) handleGetStation() http.HandlerFunc {
 			return
 		}
 
-		// TODO: Add IDs to modules
-		// TODO: Update GET /stations/id integration test
 		ms := []module{}
 		for _, m := range station.Modules {
 			ms = append(ms, module{ID: m.ID, Type: m.Type})
