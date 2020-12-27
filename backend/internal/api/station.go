@@ -10,6 +10,7 @@ import (
 
 type stationDatastore interface {
 	SaveStation(account.ID, station.Station) error
+	ListStations(account.ID) ([]station.ID, error)
 }
 
 func (s *Server) handlePostStation() http.HandlerFunc {
@@ -22,8 +23,25 @@ func (s *Server) handlePostStation() http.HandlerFunc {
 		err := s.db.SaveStation(perm.ID, station)
 		if err != nil {
 			s.internalServerError(w, err)
+			return
 		}
 
 		render.JSON(w, r, res{ID: station.ID})
+	}
+}
+
+func (s *Server) handleListStations() http.HandlerFunc {
+	type res struct {
+		Stations []station.ID `json:"stations"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		perm, _ := getCtxPermission(r)
+		ss, err := s.db.ListStations(perm.ID)
+		if err != nil {
+			s.internalServerError(w, err)
+			return
+		}
+
+		render.JSON(w, r, res{Stations: ss})
 	}
 }

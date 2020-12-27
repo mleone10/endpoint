@@ -44,3 +44,32 @@ func (c *Client) SaveStation(id account.ID, s station.Station) error {
 
 	return nil
 }
+
+// ListStations returns a list of all stations for a given account.
+func (c *Client) ListStations(id account.ID) ([]station.ID, error) {
+	uidKey, skPrefixKey := ":uid", ":station"
+	if id == "" {
+		return nil, ErrorInvalidID
+	}
+
+	res, err := c.db.Query(&dynamodb.QueryInput{
+		TableName:              aws.String(endpointTableName),
+		KeyConditionExpression: aws.String(fmt.Sprintf("%s = %s and begins_with(%s, %s)", endpointPK, uidKey, endpointSK, skPrefixKey)),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			uidKey:      {S: aws.String(id.String())},
+			skPrefixKey: {S: aws.String(skPrefixStation)},
+		},
+	})
+	if err != nil {
+		return nil, ErrorInternalServerError
+	}
+
+	ids := []station.ID{}
+	for _, i := range res.Items {
+		var s stationItem
+		dynamodbattribute.UnmarshalMap(i, &s)
+		ids = append(ids, s.Station.ID)
+	}
+
+	return ids, nil
+}

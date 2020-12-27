@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
-	"github.com/go-chi/render"
 )
 
 // Server is a root-level http.Handler
@@ -51,9 +50,7 @@ func NewServer(db Datastore, authr JWTVerifier) *Server {
 		r.Use(s.keyPermissionMapper(s.db))
 		r.Use(s.permittedOperation())
 		r.Post("/", s.handlePostStation())
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			render.NoContent(w, r)
-		})
+		r.Get("/", s.handleListStations())
 	})
 
 	return s
