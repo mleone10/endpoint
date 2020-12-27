@@ -17,3 +17,13 @@ func (m *Client) ListStations(id account.ID) ([]station.ID, error) {
 		"stationIDTwo",
 	}, nil
 }
+
+// GetStation implements a mock call to retrieve a station.
+func (m *Client) GetStation(uid account.ID, sid station.ID) (station.Station, error) {
+	return station.New(), nil
+}
+
+// DeleteStation implements a mock call to delete a station.
+func (m *Client) DeleteStation(uid account.ID, sid station.ID) error {
+	return nil
+}

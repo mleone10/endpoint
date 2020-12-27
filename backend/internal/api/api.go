@@ -51,6 +51,10 @@ func NewServer(db Datastore, authr JWTVerifier) *Server {
 		r.Use(s.permittedOperation())
 		r.Post("/", s.handlePostStation())
 		r.Get("/", s.handleListStations())
+		r.Route(fmt.Sprintf("/{%s}", urlParamStationID), func(r chi.Router) {
+			r.Get("/", s.handleGetStation())
+			r.Delete("/", s.handleDeleteStation())
+		})
 	})
 
 	return s

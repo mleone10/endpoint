@@ -73,3 +73,13 @@ func (c *Client) ListStations(id account.ID) ([]station.ID, error) {
 
 	return ids, nil
 }
+
+// GetStation retrieves a given account's station from Dynamo.
+func (c *Client) GetStation(uid account.ID, sid station.ID) (station.Station, error) {
+	return station.Station{}, nil
+}
+
+// DeleteStation deletes a given account's station from Dynamo.
+func (c *Client) DeleteStation(uid account.ID, sid station.ID) error {
+	return nil
+}

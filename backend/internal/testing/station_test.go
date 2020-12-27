@@ -50,3 +50,13 @@ func TestPostStation(t *testing.T) {
 
 	test.AssertNotEquals(t, "", s.ID)
 }
+
+func TestDeleteStation(t *testing.T) {
+	req := authenticatedReq(http.MethodDelete, "/stations/stationID", nil)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Errorf("request failed: %v", err)
+	}
+
+	test.AssertEquals(t, http.StatusNoContent, res.StatusCode)
+}

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -11,6 +12,8 @@ import (
 type stationDatastore interface {
 	SaveStation(account.ID, station.Station) error
 	ListStations(account.ID) ([]station.ID, error)
+	GetStation(account.ID, station.ID) (station.Station, error)
+	DeleteStation(account.ID, station.ID) error
 }
 
 func (s *Server) handlePostStation() http.HandlerFunc {
@@ -43,5 +46,30 @@ func (s *Server) handleListStations() http.HandlerFunc {
 		}
 
 		render.JSON(w, r, res{Stations: ss})
+	}
+}
+
+func (s *Server) handleGetStation() http.HandlerFunc {
+	type res struct {
+		ID station.ID `json:"id"`
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+	}
+}
+
+func (s *Server) handleDeleteStation() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sid := getURLParam(r, urlParamStationID)
+		perm, ok := getCtxPermission(r)
+		if !ok {
+			s.internalServerError(w, fmt.Errorf("station id not found"))
+		}
+
+		err := s.db.DeleteStation(perm.ID, station.ID(sid))
+		if err != nil {
+			s.internalServerError(w, fmt.Errorf("failed to delete station [%v] for account [%v]: %v", perm.ID, sid, err))
+		}
+
+		render.NoContent(w, r)
 	}
 }
