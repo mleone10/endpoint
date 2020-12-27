@@ -32,9 +32,10 @@ type Resources map[Resource]Quantity
 
 // Station represents a top-level game state.
 type Station struct {
-	ID        ID        `json:"id"`
-	Modules   []Module  `json:"mods"`
-	Resources Resources `json:"res"`
+	ID           ID        `json:"id"`
+	CreationTime time.Time `json:"creationTime"`
+	Modules      []Module  `json:"mods"`
+	Resources    Resources `json:"res"`
 }
 
 // A Module is a component added to a Station.
@@ -46,8 +47,8 @@ type Module struct {
 
 // A Quantity represents two things: an amount, and the time at which that amount was recorded.
 type Quantity struct {
-	Amount Amount
-	Time   time.Time
+	Amount Amount    `json:"amt"`
+	Time   time.Time `json:"time"`
 }
 
 // Resources are things which the station has, produces, or consumes.
@@ -81,8 +82,9 @@ func New() Station {
 	cm.ID = newID()
 
 	return Station{
-		ID:      newID(),
-		Modules: []Module{cm},
+		ID:           newID(),
+		CreationTime: time.Now(),
+		Modules:      []Module{cm},
 		Resources: Resources{
 			ResourceCrew:  newQuantity(10),
 			ResourceFunds: newQuantity(10000),
@@ -90,7 +92,7 @@ func New() Station {
 	}
 }
 
-// NetProduction returns the aggregate production rates for the whole station
+// NetProduction returns the aggregate production rates for the whole station.
 func (s Station) NetProduction() Production {
 	p := Production{}
 	for _, m := range s.Modules {
@@ -99,6 +101,23 @@ func (s Station) NetProduction() Production {
 		}
 	}
 	return p
+}
+
+// CurrentResources returns the station's time-adjusted resources quantities.
+func (s Station) CurrentResources() map[Resource]Amount {
+	now := time.Now()
+	rs := map[Resource]Amount{}
+	for res, rate := range s.NetProduction() {
+		startTime := s.Resources[res].Time
+		if _, ok := s.Resources[res]; !ok {
+			startTime = s.CreationTime
+		}
+		rs[res] = Amount(float64(s.Resources[res].Amount) + (float64(rate) * float64((now.Sub(startTime).Seconds()))))
+	}
+	for res, quant := range s.Resources {
+		rs[res] = quant.Amount
+	}
+	return rs
 }
 
 func newQuantity(init Amount) Quantity {
