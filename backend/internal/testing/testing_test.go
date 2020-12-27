@@ -1,8 +1,11 @@
 // +build integration
 
-package testing
+package testing_test
 
 import (
+	"fmt"
+	"io"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -25,4 +28,11 @@ func setupServer() {
 	db := mockDb.NewClient()
 	authr, _ := mockFirebase.NewAuthenticator()
 	s = httptest.NewServer(api.NewServer(db, authr))
+}
+
+func authenticatedReq(method, path string, body io.Reader) *http.Request {
+	req, _ := http.NewRequest(method, fmt.Sprintf("%s%s", s.URL, path), body)
+	req.Header.Set("x-api-key", "whatever")
+
+	return req
 }

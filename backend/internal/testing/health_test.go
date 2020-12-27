@@ -1,6 +1,6 @@
 // +build integration
 
-package testing
+package testing_test
 
 import (
 	"fmt"

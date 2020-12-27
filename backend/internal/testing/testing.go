@@ -1,6 +1,8 @@
 package testing
 
-import "testing"
+import (
+	"testing"
+)
 
 // AssertEquals calls t.Fatalf if want != got.
 func AssertEquals(t *testing.T, want, got interface{}) {

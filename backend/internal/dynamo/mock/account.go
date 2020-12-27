@@ -26,5 +26,5 @@ func (m *Client) DeleteAPIKey(id account.ID, apiKey account.APIKey) error {
 func (m *Client) GetKeyPermission(a string) (account.Permission, error) {
 	return account.Permission{
 		ID:       account.ID("testUserID"),
-		ReadOnly: true}, nil
+		ReadOnly: false}, nil
 }
