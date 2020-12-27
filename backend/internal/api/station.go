@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/render"
 	"github.com/mleone10/endpoint/internal/account"
+	"github.com/mleone10/endpoint/internal/dynamo"
 	"github.com/mleone10/endpoint/internal/station"
 )
 
@@ -50,10 +51,40 @@ func (s *Server) handleListStations() http.HandlerFunc {
 }
 
 func (s *Server) handleGetStation() http.HandlerFunc {
+	type module struct {
+		ID   station.ID         `json:"id"`
+		Type station.ModuleType `json:"type"`
+	}
 	type res struct {
-		ID station.ID `json:"id"`
+		ID      station.ID `json:"id"`
+		Modules []module   `json:"modules"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
+		sid := getURLParam(r, urlParamStationID)
+		perm, ok := getCtxPermission(r)
+		if !ok {
+			s.internalServerError(w, fmt.Errorf("station id not found"))
+			return
+		}
+
+		station, err := s.db.GetStation(perm.ID, station.ID(sid))
+		if err != nil && err == dynamo.ErrorItemNotFound {
+			s.notFound(w, fmt.Errorf("station [%v] not found", sid))
+		} else if err != nil {
+			s.internalServerError(w, fmt.Errorf("failed to retrieve station [%v] for account [%v]: %v", perm.ID, sid, err))
+			return
+		}
+
+		// TODO: Add IDs to modules
+		// TODO: Update GET /stations/id integration test
+		ms := []module{}
+		for _, m := range station.Modules {
+			ms = append(ms, module{ID: m.ID, Type: m.Type})
+		}
+		render.JSON(w, r, res{
+			ID:      station.ID,
+			Modules: ms,
+		})
 	}
 }
 

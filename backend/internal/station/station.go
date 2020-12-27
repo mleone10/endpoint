@@ -39,6 +39,7 @@ type Station struct {
 
 // A Module is a component added to a Station.
 type Module struct {
+	ID         ID         `json:"id"`
 	Type       ModuleType `json:"type"`
 	Production Production `json:"prod"`
 }
@@ -76,11 +77,12 @@ var (
 
 // New returns an newly created Station with initial configuration.
 func New() Station {
+	cm := ModuleCommand
+	cm.ID = newID()
+
 	return Station{
-		ID: ID(ksuid.New().String()),
-		Modules: []Module{
-			ModuleCommand,
-		},
+		ID:      newID(),
+		Modules: []Module{cm},
 		Resources: Resources{
 			ResourceCrew:  newQuantity(10),
 			ResourceFunds: newQuantity(10000),
@@ -93,4 +95,8 @@ func newQuantity(init Amount) Quantity {
 		Amount: init,
 		Time:   time.Now(),
 	}
+}
+
+func newID() ID {
+	return ID(ksuid.New().String())
 }

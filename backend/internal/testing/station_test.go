@@ -51,6 +51,34 @@ func TestPostStation(t *testing.T) {
 	test.AssertNotEquals(t, "", s.ID)
 }
 
+func TestGetStation(t *testing.T) {
+	req := authenticatedReq(http.MethodGet, "/stations/stationID", nil)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Errorf("request failed: %v", err)
+	}
+
+	test.AssertEquals(t, http.StatusOK, res.StatusCode)
+
+	defer res.Body.Close()
+	s := struct {
+		ID      station.ID `json:"id"`
+		Modules []struct {
+			ID   station.ID         `json:"id"`
+			Type station.ModuleType `json:"type"`
+		} `json:"modules"`
+	}{}
+	err = json.NewDecoder(res.Body).Decode(&s)
+	if err != nil {
+		t.Error("failed to parse response")
+	}
+
+	test.AssertEquals(t, station.ID("stationID"), s.ID)
+	test.AssertEquals(t, 1, len(s.Modules))
+	test.AssertEquals(t, station.ModuleType("command"), s.Modules[0].Type)
+	test.AssertNotEquals(t, "", s.Modules[0].ID)
+}
+
 func TestDeleteStation(t *testing.T) {
 	req := authenticatedReq(http.MethodDelete, "/stations/stationID", nil)
 	res, err := http.DefaultClient.Do(req)

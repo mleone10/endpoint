@@ -76,10 +76,42 @@ func (c *Client) ListStations(id account.ID) ([]station.ID, error) {
 
 // GetStation retrieves a given account's station from Dynamo.
 func (c *Client) GetStation(uid account.ID, sid station.ID) (station.Station, error) {
-	return station.Station{}, nil
+	res, err := c.db.GetItem(&dynamodb.GetItemInput{
+		TableName: aws.String(endpointTableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			endpointPK: {S: aws.String(uid.String())},
+			endpointSK: {S: aws.String(fmt.Sprintf("%s#%s", skPrefixStation, sid))},
+		},
+	})
+	if err != nil {
+		return station.Station{}, fmt.Errorf("failed to get station: %v", err)
+	}
+
+	if res.Item == nil {
+		return station.Station{}, ErrorItemNotFound
+	}
+
+	var s stationItem
+	err = dynamodbattribute.UnmarshalMap(res.Item, &s)
+	if err != nil {
+		return station.Station{}, fmt.Errorf("failed to unmarshal station response: %v", err)
+	}
+
+	return s.Station, nil
 }
 
 // DeleteStation deletes a given account's station from Dynamo.
 func (c *Client) DeleteStation(uid account.ID, sid station.ID) error {
+	_, err := c.db.DeleteItem(&dynamodb.DeleteItemInput{
+		TableName: aws.String(endpointTableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			endpointPK: {S: aws.String(uid.String())},
+			endpointSK: {S: aws.String(fmt.Sprintf("%s#%s", skPrefixStation, sid))},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete station [%v]: %v", sid, err)
+	}
+
 	return nil
 }

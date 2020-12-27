@@ -2,6 +2,7 @@ package mock
 
 import (
 	"github.com/mleone10/endpoint/internal/account"
+	"github.com/mleone10/endpoint/internal/dynamo"
 	"github.com/mleone10/endpoint/internal/station"
 )
 
@@ -20,7 +21,12 @@ func (m *Client) ListStations(id account.ID) ([]station.ID, error) {
 
 // GetStation implements a mock call to retrieve a station.
 func (m *Client) GetStation(uid account.ID, sid station.ID) (station.Station, error) {
-	return station.New(), nil
+	if sid == station.ID("stationID") {
+		s := station.New()
+		s.ID = sid
+		return s, nil
+	}
+	return station.New(), dynamo.ErrorItemNotFound
 }
 
 // DeleteStation implements a mock call to delete a station.

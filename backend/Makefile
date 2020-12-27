@@ -16,6 +16,9 @@ build: clean integration
 	cp endpointCredentials.json bin/
 
 run: build
+	GOOGLE_APPLICATION_CREDENTIALS=./bin/endpointCredentials.json ./bin/endpoint
+
+mock: build
 	GOOGLE_APPLICATION_CREDENTIALS=./bin/endpointCredentials.json ENDPOINT_LOCAL=true ./bin/endpoint
 
 deploy:
